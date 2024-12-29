@@ -1,0 +1,17 @@
+@media all and (display-mode: standalone) {
+  body {
+    /* Prevent bounce scroll effect on iOS */
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+}
+
+/* Ensure the app takes full height on iOS */
+html, body, #root {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  -webkit-overflow-scrolling: touch;
+}

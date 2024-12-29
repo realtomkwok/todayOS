@@ -1,0 +1,33 @@
+/* Import Material Design themes */
+@import "./components/md-theme/light.css";
+@import "./components/md-theme/dark.css";
+@import "./components/md-theme/light-mc.css";
+@import "./components/md-theme/light-hc.css";
+@import "./components/md-theme/dark-mc.css";
+@import "./components/md-theme/dark-hc.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+	/* Default to light theme */
+	:root {
+		@apply light;
+	}
+
+	body {
+		@apply bg-md-surface
+	}
+
+	/* Apply dark theme based on system preference */
+	@media (prefers-color-scheme: dark) {
+		:root {
+			@apply dark;
+		}
+
+		body {
+			@apply bg-md-surface
+		}
+	}
+}
