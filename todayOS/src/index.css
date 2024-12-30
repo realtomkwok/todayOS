@@ -1,10 +1,10 @@
 /* Import Material Design themes */
-@import "./components/md-theme/light.css";
-@import "./components/md-theme/dark.css";
-@import "./components/md-theme/light-mc.css";
-@import "./components/md-theme/light-hc.css";
-@import "./components/md-theme/dark-mc.css";
-@import "./components/md-theme/dark-hc.css";
+@import "@themes/Surry Hill/light.css";
+@import "@themes/Surry Hill/dark.css";
+@import "@themes/Surry Hill/light-mc.css";
+@import "@themes/Surry Hill/light-hc.css";
+@import "@themes/Surry Hill/dark-mc.css";
+@import "@themes/Surry Hill/dark-hc.css";
 
 @tailwind base;
 @tailwind components;

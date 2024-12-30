@@ -6,6 +6,11 @@ export default {
       "./src/**/*.{js,ts,jsx,tsx}"
   ],
   theme: {
+    fontFamily: {
+      'sans': ['Inter', 'ui-sans-serif', 'system-ui'],
+      'mono': ['Martian Mono', 'ui-monospace', 'monospace'],
+      'display': ['Bricolage Grotesque', 'Helvetica Neue', 'sans-serif'],
+    },
     extend: {
       colors: {
         'md': {
