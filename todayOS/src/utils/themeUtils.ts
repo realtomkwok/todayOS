@@ -2,7 +2,6 @@ function getThemeColor(): { backgroundColor: string; prefersDark: boolean } {
   // Check if system prefers dark mode
   const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
   
-  
   // Get the computed background color from the surface
   const surfaceElement = document.querySelector('body');
   const computedStyle = window.getComputedStyle(surfaceElement!);

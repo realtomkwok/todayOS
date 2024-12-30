@@ -17,9 +17,9 @@ export const JustType = () => {
 	const Inactive = (props: MotionProps) => {
 		return (
 			<motion.div
-				className="absolute flex items-center justify-left bg-md-primary-fixed text-md-on-primary-fixed rounded-3xl z-20 cursor-pointer"
+				className="absolute flex items-center justify-left bg-md-primary-fixed text-md-on-primary-fixed rounded-3xl z-[20] cursor-pointer"
 				onClick={handleActivate}
-				whileTap={{ scale: 1.2, y: -12 }}
+				whileTap={{ scale: 1.1, y: -8 }}
 				{...props}
 			>
 				<span className="font-mono text-xs font-medium tracking-tight w-fit text-nowrap px-4 py-2">
@@ -32,18 +32,22 @@ export const JustType = () => {
 	const Active = (props: MotionProps) => {
 		return (
 			<motion.div
-				className="absolute flex items-center justify-left bg-md-primary-fixed text-md-on-primary-fixed rounded-3xl overflow-hidden"
+				className="absolute flex items-center justify-left bg-md-surface-container-high text-md-on-surface rounded-3xl overflow-hidden z-[100]"
 				{...props}
 			>
 				<input
 					ref={inputRef}
+					placeholder='Just type...'
+					defaultValue={inputValue}
 					type="text"
-					value={inputValue}
-					onChange={(e) => setInputValue(e.target.value)}
-					onBlur={() => !inputValue && setIsActive(false)}
-					placeholder="Just type…"
-					className="w-full bg-transparent text-md-on-primary-fixed font-sans text-xs font-medium tracking-tight outline-none px-4 py-2 placeholder:text-md-on-primary-fixed/50"
+					className="w-full bg-transparent font-sans text-md font-regular tracking-wide outline-none px-4 py-2 placeholder:text-md-on-primary-variant placeholder:font-medium placeholder:text-sm placeholder:tracking-tightest"
 					autoComplete="off"
+					onKeyDown={(e) => {
+						if (e.key === "Enter") {
+							setInputValue(e.currentTarget.value)
+						}
+					}}
+					
 				/>
 			</motion.div>
 		)
@@ -59,8 +63,8 @@ export const JustType = () => {
 						animate={{ opacity: 0.32 }}
 						exit={{ opacity: 0 }}
 						transition={transition.onScreen}
-						className="fixed inset-0 bg-md-scrim"
-						onClick={() => !inputValue && setIsActive(false)}
+						className="fixed inset-0 bg-md-scrim z-[99]"
+						onClick={() => setIsActive(false)}
 					/>
 				)}
 			</AnimatePresence>
