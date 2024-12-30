@@ -139,7 +139,7 @@ export const App = (props: IApp) => {
 			onTapCancel={handleTapCancel}
 		>
 			<motion.span
-				className="relative -top-8 py-1 px-2 rounded-full text-xs font-sans font-medium bg-md-surface-container-highest text-md-on-surface-variant"
+				className="relative -top-10 py-1 px-2 rounded-full text-2xs font-sans font-medium bg-md-surface-container-highest text-md-on-surface-variant"
 				variants={textMotion}
 				initial="initial"
 				animate={textAnimationControl}
