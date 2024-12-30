@@ -47,7 +47,8 @@ export const AppsDrawer = () => {
 			{/* Dock */}
 			<div className="w-full md:w-fit flex flex-row justify-around gap-4">
 				{apps.map((app) => (
-					<AppIcon
+                    <AppIcon
+                        key={app.name}
 						icon={app.icon}
 						name={app.name}
 						role={app.role}
