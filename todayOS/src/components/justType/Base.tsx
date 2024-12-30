@@ -17,7 +17,7 @@ export const JustType = () => {
 	const Inactive = (props: MotionProps) => {
 		return (
 			<motion.div
-				className="absolute flex items-center justify-left bg-md-primary-fixed text-md-on-primary-fixed rounded-3xl z-50 cursor-pointer"
+				className="absolute flex items-center justify-left bg-md-primary-fixed text-md-on-primary-fixed rounded-3xl z-20 cursor-pointer"
 				onClick={handleActivate}
 				whileTap={{ scale: 1.2, y: -12 }}
 				{...props}
@@ -99,7 +99,7 @@ export const JustType = () => {
 							}}
 							exit={{
 								scale: 0.5,
-								y: 0,
+								y: 12,
 								opacity: 0,
 								transition: transition.exit,
 							}}
