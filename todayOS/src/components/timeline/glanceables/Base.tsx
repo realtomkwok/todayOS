@@ -13,7 +13,7 @@ export const Glanceables = (props: IGlanceables) => {
 		<motion.div
 			className={`flex flex-row justify-center items-center py-1 gap-1 w-fit h-fit ${
 				props.isActive
-					? "bg-md-primary-container text-md-on-primary-container rounded-full px-4 font-medium text-base"
+					? "bg-md-primary-container text-md-on-primary-container rounded-full px-3 font-medium text-base"
 					: "text-md-on-surface-variant px-2 font-normal text-sm"
 			}`}
 		>
