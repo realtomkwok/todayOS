@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 
 export function useNowTime() {
 	const formatTime = (date: Date) => {
+		const dateString = date.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' })
 		const timeString = date.toLocaleTimeString([], {
 			hour: "numeric",
 			 minute: "2-digit",
@@ -12,7 +13,7 @@ export function useNowTime() {
 		const hour = Number(time.split(':')[0])
 		const minute = Number(time.split(':')[1])
 		const period = timeString.replace(time, '').trim()
-		return { time, hour, minute, period }
+		return { time, hour, minute, period, dateString }
 	}
 
 	const [timeData, setTimeData] = useState(formatTime(new Date()))

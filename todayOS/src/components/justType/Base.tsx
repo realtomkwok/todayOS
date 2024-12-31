@@ -17,14 +17,14 @@ export const JustType = () => {
 	const Inactive = (props: MotionProps) => {
 		return (
 			<motion.div
-				className="absolute flex items-center justify-left bg-md-primary-fixed text-md-on-primary-fixed rounded-3xl z-[20] cursor-pointer"
+				className="absolute flex items-center justify-left bg-md-tertiary-fixed text-md-on-tertiary-fixed rounded-3xl z-[20] cursor-pointer"
 				// onClick={handleActivate}
 				whileTap={{ scale: 1.1, y: -8 }}
 				{...props}
 				onTap={handleActivate}
 				onTapCancel={() => setIsActive(false)}
 			>
-				<span className="font-sans text-sm font-semibold tracking-tight italic w-fit text-nowrap px-4 py-2">
+				<span className="font-sans text-xs font-semibold tracking-tight italic w-fit text-nowrap px-4 py-2">
 					Just type…
 				</span>
 			</motion.div>
@@ -34,7 +34,7 @@ export const JustType = () => {
 	const Active = (props: MotionProps) => {
 		return (
 			<motion.div
-				className="absolute flex items-center justify-left bg-md-surface-container-high text-md-on-surface rounded-3xl overflow-hidden z-[100]"
+				className="absolute flex items-center justify-left bg-md-surface-container-high text-md-on-surface border border-md-outline-variant rounded-3xl overflow-hidden z-[100]"
 				{...props}
 			>
 				<input
@@ -42,7 +42,7 @@ export const JustType = () => {
 					placeholder='Just type...'
 					defaultValue={inputValue}
 					type="text"
-					className="w-full bg-transparent font-sans text-md font-medium tracking-wide outline-none px-4 py-2 placeholder:text-md-on-primary-variant placeholder:font-medium placeholder:text-sm placeholder:tracking-tightest placeholder:italic"
+					className="w-full bg-transparent font-sans text-base font-medium tracking-wide outline-none px-4 py-2 placeholder:text-md-on-primary-variant placeholder:font-medium placeholder:text-md placeholder:tracking-tight placeholder:italic"
 					autoComplete="off"
 					onKeyDown={(e) => {
 						if (e.key === "Enter") {
