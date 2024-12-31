@@ -9,7 +9,7 @@ export const BaseDrawer = ({
 	children: React.ReactNode
 }) => {
     return (
-        <div className="absolute bottom-0 w-screen flex flex-col gap-4 items-center z-10">
+        <div className="fixed bottom-0 w-screen flex flex-col gap-4 items-center z-10">
             <div className="w-full flex justify-center items-center px-4">
                 <JustType />
             </div>
