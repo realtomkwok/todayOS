@@ -9,11 +9,11 @@ export function useNowTime() {
 			 hour12: true,
 		})
 		const timeMatch = timeString.match(/(\d+:\d+)/)
-		const time = timeMatch?.[1] || ''
+		const time = timeMatch?.[0] || ''
 		const hour = Number(time.split(':')[0])
 		const minute = Number(time.split(':')[1])
 		const period = timeString.replace(time, '').trim()
-		return { time, hour, minute, period, dateString }
+		return { hour, minute, period, dateString, timeString }
 	}
 
 	const [timeData, setTimeData] = useState(formatTime(new Date()))

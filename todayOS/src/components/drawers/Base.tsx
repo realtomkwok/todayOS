@@ -14,7 +14,7 @@ export const BaseDrawer = ({
                 <JustType />
             </div>
 			<motion.div
-				className="w-full px-4 pt-4 rounded-3xl flex flex-col bg-md-surface-container-high items-center"
+				className="w-full px-4 pt-4 rounded-tl-[32px] rounded-tr-[32px] flex flex-col bg-md-surface-container-high items-center"
 				{...props}
 			>
 				<div className="flex justify-center mb-4">
