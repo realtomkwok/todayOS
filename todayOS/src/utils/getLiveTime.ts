@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 
 export function useNowTime() {
-	const formatTime = (date: Date) => {
+	const formatTime = (time: Date) => {
+		const rawTime = date
 		const dateString = date.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' })
 		const timeString = date.toLocaleTimeString([], {
 			hour: "numeric",
@@ -10,10 +11,10 @@ export function useNowTime() {
 		})
 		const timeMatch = timeString.match(/(\d+:\d+)/)
 		const time = timeMatch?.[0] || ''
-		const hour = Number(time.split(':')[0])
+		const hour = time
 		const minute = Number(time.split(':')[1])
 		const period = timeString.replace(time, '').trim()
-		return { hour, minute, period, dateString, timeString }
+		return { hour, minute, period, dateString, timeString, rawTime }
 	}
 
 	const [timeData, setTimeData] = useState(formatTime(new Date()))

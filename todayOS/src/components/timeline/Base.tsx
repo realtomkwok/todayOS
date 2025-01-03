@@ -1,8 +1,8 @@
 import { useNowTime } from "../../utils/getLiveTime"
 import { TimeIndicator } from "./TimeIndicator"
 import { Glanceables } from "./glanceables/Base"
-import { useState, useEffect, useRef, forwardRef } from "react"
-import { motion, useAnimationControls } from "motion/react"
+import { useState, useEffect, useRef, forwardRef, useCallback } from "react"
+import { AnimatePresence, motion, useAnimationControls } from "motion/react"
 import { transition } from "@/utils/motionUtils"
 
 interface IContent {
@@ -14,14 +14,13 @@ interface IContent {
 	className?: string
 }
 
-export const Content = forwardRef<HTMLDivElement, IContent>((props, ref) => {
+export const Content = forwardRef<HTMLDivElement, IContent>((props) => {
 	const HourBlock = (props: {
 		hour: number
 		period: string
 		children: React.ReactNode
-        showTime?: boolean
-        isExpanded?: boolean
-
+		showTime?: boolean
+		isExpanded?: boolean
 	}) => {
 		return (
 			<div className="flex flex-row w-full items-start px-4 h-fit">
@@ -115,6 +114,10 @@ export const Timeline = () => {
 
 	const overlayAnimation = useAnimationControls()
 
+	const [displayedHour, setDisplayedHour] = useState(hour)
+	const [displayedMinute, setDisplayedMinute] = useState(minuteString)
+	const [displayedPeriod, setDisplayedPeriod] = useState(period)
+
 	const Overlay = (props: { position: "top" | "bottom" }) => {
 		const overlayVariants = {
 			initial: {
@@ -143,6 +146,44 @@ export const Timeline = () => {
 	const contentContainerRef = useRef<HTMLDivElement>(null)
 	const scrollTimeout = useRef<NodeJS.Timeout>()
 
+	const updateTimeFromScroll = useCallback(() => {
+		const container = contentContainerRef.current
+		if (!container) return
+
+		const scrollPosition = container.scrollTop
+		const hourBlockHeight = container.clientHeight / 3 // Height of each hour block
+
+		// Calculate hour and minute from scroll position
+		const scrollRatio = scrollPosition / hourBlockHeight
+		const hourOffset = Math.floor(scrollRatio)
+		const minuteOffset = Math.floor((scrollRatio % 1) * 60)
+
+		let newHour = hour + hourOffset
+
+		// Ensure hour stays within 1-12 range
+		if (newHour > 12) {
+			newHour = newHour % 12 || 12
+		} else if (newHour <= 0) {
+			newHour = 12 + (newHour % 12)
+		}
+
+		// Update period if we cross AM/PM boundary
+		let newPeriod = period
+		const totalHours = hour + hourOffset
+		if (totalHours >= 12 && totalHours < 24) {
+			newPeriod = "PM"
+		} else {
+			newPeriod = "AM"
+		}
+
+		// Format minutes with leading zero
+		const newMinute = minuteOffset.toString().padStart(2, "0")
+
+		setDisplayedHour(newHour)
+		setDisplayedMinute(newMinute)
+		setDisplayedPeriod(newPeriod)
+	}, [hour, period])
+
 	useEffect(() => {
 		const handleTouchStart = () => {
 			setIsScrolling(true)
@@ -158,6 +199,7 @@ export const Timeline = () => {
 
 		const handleScroll = () => {
 			setIsScrolling(true)
+			updateTimeFromScroll()
 			if (scrollTimeout.current) clearTimeout(scrollTimeout.current)
 			scrollTimeout.current = setTimeout(() => {
 				setIsScrolling(false)
@@ -181,32 +223,34 @@ export const Timeline = () => {
 			container.removeEventListener("scroll", handleScroll)
 			clearTimeout(scrollTimeout.current)
 		}
-	}, [overlayAnimation])
+	}, [])
 
 	return (
-		<div
-			className="relative w-full h-4/5 bg-md-surface flex flex-col items-left justify-start overflow-y-auto"
-			ref={contentContainerRef}
-		>
-			{/* Top gradient overlay */}
-			<Overlay position="top" />
+		<AnimatePresence>
+			<motion.div
+				className="relative w-full h-4/5 bg-md-surface flex flex-col items-left justify-start overflow-y-auto"
+				ref={contentContainerRef}
+			>
+				{/* Top gradient overlay */}
+				<Overlay position="top" />
 
-			<TimeIndicator
-				className="fixed top-24 z-[30]"
-				date={dateString}
-				time={time}
-				period={period}
-				isActive={isScrolling}
-			/>
-			<Content
-				timeString={timeString}
-				dateString={dateString}
-				hour={hour}
-				minute={minuteString}
-				period={period}
-			/>
-			{/* Bottom gradient overlay */}
-			<Overlay position="bottom" />
-		</div>
+				<TimeIndicator
+					className="fixed top-24 z-[30]"
+					date={dateString}
+					time={`${displayedHour}:${displayedMinute}`}
+					period={displayedPeriod}
+					isActive={isScrolling}
+				/>
+				<Content
+					timeString={timeString}
+					dateString={dateString}
+					hour={displayedHour}
+					minute={displayedMinute}
+					period={displayedPeriod}
+				/>
+				{/* Bottom gradient overlay */}
+				<Overlay position="bottom" />
+			</motion.div>
+		</AnimatePresence>
 	)
 }
