@@ -78,14 +78,14 @@ export const Timeline = () => {
 	}, [calculateDimensions])
 
 	// Get cumulative height up to a specific hour
-	const getHeightBeforeHour = (hour: number) => {
+	const getHeightBeforeHour = useCallback((hour: number) => {
 		return (
 			dimensions.hourHeights
 				.slice(0, hour)
 				.reduce((sum, height) => sum + height, 0) +
 			hour * HOUR_LABEL_HEIGHT
 		)
-	}
+	}, [dimensions])
 
 	// Convert position to time, accounting for variable heights
 	const getTimeFromScrollPosition = (scrollTop: number) => {
@@ -121,7 +121,7 @@ export const Timeline = () => {
 	}
 
 	// Convert time to scroll position, accounting for variable heights
-	const getScrollPositionForTime = (time: Date) => {
+	const getScrollPositionForTime = useCallback((time: Date) => {
 		const hours = time.getHours()
 		const minutes = time.getMinutes()
 
@@ -133,7 +133,7 @@ export const Timeline = () => {
 		const minutePosition = (minutes / 60) * hourHeight
 
 		return heightBeforeHour + minutePosition
-	}
+	}, [dimensions, getHeightBeforeHour])
 
 	const scrollToTime = useCallback((time: Date) => {
 		if (timelineRef.current && dimensions.totalHeight > 0) {
@@ -143,7 +143,7 @@ export const Timeline = () => {
 			timelineRef.current.scrollTop = scrollPosition
 			timelineRef.current.style.scrollBehavior = "smooth"
 		}
-	}, [dimensions])
+	}, [dimensions, getScrollPositionForTime])
 
 	// Add a useEffect to watch lock state changes
 	useEffect(() => {
@@ -166,7 +166,8 @@ export const Timeline = () => {
 
 		// Only set timeout if not currently locked
 		if (!isTimelineLocked) {
-			scrollTimeoutRef.current = window.setTimeout(async () => {
+            scrollTimeoutRef.current = window.setTimeout(async () => {
+                isInteracting.current = false
 				// Double-check lock state before executing scroll
 				if (!isTimelineLocked) {
 					const now = new Date()
@@ -174,12 +175,13 @@ export const Timeline = () => {
 					scrollToTime(now)
 					console.log("Scroll to time after 3 seconds")
 				}
-				isScrolling.current = false
+                isScrolling.current = false
 			}, 3000)
 		} else {
 			// If already locked, just reset scrolling state after a short delay
 			scrollTimeoutRef.current = window.setTimeout(() => {
 				isScrolling.current = false
+                isInteracting.current = false
 			}, 300) // Shorter timeout for locked state
 		}
     }
@@ -279,14 +281,14 @@ export const Timeline = () => {
 						className="w-2 h-2 rounded-full bg-md-error -ml-1 flex justify-center items-center z-20"
 						initial={false}
 						animate={{
-							width: isScrolling.current
+							width: isInteracting.current
 								? "fit-content"
 								: "0.5rem",
-							height: isScrolling.current
+							height: isInteracting.current
 								? "fit-content"
 								: "0.5rem",
-							padding: isScrolling.current ? "0.5rem 1rem" : "0",
-							fontSize: isScrolling.current ? "1rem" : "0.5rem",
+							padding: isInteracting.current ? "0.5rem 1rem" : "0",
+							fontSize: isInteracting.current ? "1rem" : "0.5rem",
 							transition: transition.enter,
 						}}
 						exit={{
@@ -295,7 +297,7 @@ export const Timeline = () => {
 							padding: "0",
 							fontSize: "0.5rem",
 							transition: transition.exit,
-						}}
+                        }}
 					>
 						<motion.span
 							className="text-xs font-medium font-display text-md-on-error"
@@ -304,8 +306,8 @@ export const Timeline = () => {
 								scale: 0,
 							}}
 							animate={{
-								opacity: isScrolling.current ? 1 : 0,
-								scale: isScrolling.current ? 1 : 0,
+								opacity: isInteracting.current ? 1 : 0,
+								scale: isInteracting.current ? 1 : 0,
 							}}
 							transition={transition.enter}
 						>
@@ -320,9 +322,13 @@ export const Timeline = () => {
 						className="absolute left-4 z-50 flex flex-col items-start"
 						initial={false}
 						animate={{
-							opacity: isScrolling.current ? 0 : 1,
-						}}
-						transition={transition.enter}
+                            opacity: isInteracting.current ? 0 : 1,
+                            transition: transition.enter
+                        }}
+                        exit={{
+                            opacity: 0,
+                            transition: transition.exit
+                        }}
 					>
 						<motion.span className="absolute -top-6 text-md-on-surface-variant text-xl font-display font-medium tracking-normal">
 							{displayTime.toLocaleDateString("en-US", {
@@ -345,8 +351,8 @@ export const Timeline = () => {
 								}}
 								animate={{
 									fontVariationSettings:
-										!isScrolling.current ||
-										!isScrolling.current
+										!isInteracting.current ||
+										!isInteracting.current
 											? `'opsz' 24, 'wdth' 75, 'wght' 800`
 											: `'opsz' 32, 'wdth' 75, 'wght' 200`,
 									transition: transition.enter,
@@ -399,7 +405,7 @@ export const Timeline = () => {
 					onScroll={handleScroll}
 					variants={timelineAnimationVariants}
 					initial="initial"
-					animate={isScrolling.current ? "visible" : "initial"}
+					animate={isInteracting.current ? "visible" : "initial"}
 					transition={transition.onScreen}
 				>
 					{/* Lock button to prevent scrolling back to the current time */}
@@ -407,16 +413,19 @@ export const Timeline = () => {
 						className="fixed top-4 right-4 z-10"
 						initial={{ opacity: 0 }}
 						animate={
-							isScrolling.current
+							isInteracting.current
 								? { opacity: 1, transition: transition.enter }
 								: { opacity: 0, transition: transition.exit }
 						}
 					>
 						<FAB
 							size="regular"
-							role={isTimelineLocked ? "secondary" : "primary"}
-							icon={isTimelineLocked ? "lock_open" : "lock"}
-							text={isTimelineLocked ? "Unlock Timeline" : "Lock Timeline"}
+							role="secondary"
+							icon="lock"
+							iconAlt="lock_open"
+							text="Lock"
+							textAlt="Unlock"
+							isAlt={isTimelineLocked}
 							onClick={() => {
 								setisTimelineLocked((prev) => {
 									// If we're changing from locked to unlocked
@@ -452,30 +461,34 @@ export const Timeline = () => {
 						{Array.from({ length: 24 }, (_, hour) => {
 							const heightBeforeHour = getHeightBeforeHour(hour)
 
-							return (
-								<div
-									key={hour}
-									ref={(el) => (hourRefs.current[hour] = el)}
-									className="absolute left-4 right-4 flex flex-row items-start"
-									style={{
-										top: `${
-											heightBeforeHour +
-											dimensions.paddingTop
-										}px`,
-									}}
-								>
-									<div className="flex items-center">
-										<span className="text-xs font-display text-md-on-surface-variant mr-2 w-12  text-right">
-											{`${convertHourToString(
-												hour,
-												true
-											)}`}
-										</span>
-										<div className="w-4 h-px bg-md-outline-variant -ml-px" />
-									</div>
+                            return (
+								<>
+									<div
+										key={hour}
+										ref={(el) =>
+											(hourRefs.current[hour] = el)
+										}
+										className="absolute left-4 right-4 flex flex-row items-start"
+										style={{
+											top: `${
+												heightBeforeHour +
+												dimensions.paddingTop
+											}px`,
+										}}
+									>
+										<div className="flex items-center">
+											<span className="text-xs font-display text-md-on-surface-variant mr-2 w-12  text-right">
+												{`${convertHourToString(
+													hour,
+													true
+												)}`}
+											</span>
+											<div className="w-4 h-px bg-md-outline-variant -ml-px" />
+										</div>
 
-									<div className="flex flex-col w-full"></div>
-								</div>
+										<div className="flex flex-col w-full"></div>
+									</div>
+								</>
 							)
 						})}
 					</div>
