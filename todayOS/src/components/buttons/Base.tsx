@@ -1,5 +1,6 @@
 import { HTMLMotionProps, motion } from "motion/react"
 import { useState } from "react"
+import { stateLayerOpacity, transition } from "@/utils/motionUtils"
 
 export type BaseButtonProps = {
     className?: string

@@ -1,8 +1,7 @@
 import { SymbolCodepoints } from "react-material-symbols"
 import { MaterialSymbol } from "react-material-symbols"
 import { BaseButton } from "./Base"
-import { HTMLMotionProps, AnimatePresence, motion } from "motion/react"
-import { transition } from "@/utils/motionUtils"
+import { HTMLMotionProps, AnimatePresence } from "motion/react"
 
 interface FABProps extends HTMLMotionProps<"button"> {
     icon: SymbolCodepoints
@@ -40,11 +39,11 @@ export const FAB = (props: FABProps) => {
 	return (
 		<AnimatePresence>
 			<BaseButton
-				className={`bg-primary-container text-primary ${themes[role].container} ${styles[size]}`}
+				className={`${themes[role].container} ${styles[size]}`}
 				{...rest}
             >
                     <MaterialSymbol fill icon={icon} />
-                    <span className="text-md-on-surface-variant text-sm font-sans font-medium tracking-normal">
+                    <span className="text-sm font-sans font-medium tracking-normal">
                         {text}
 					</span>
 			</BaseButton>

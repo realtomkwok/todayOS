@@ -8,7 +8,8 @@ interface IGlanceables {
 }
 
 export const Glanceables = (props: IGlanceables) => {
-
+	const { isActive, icon, text } = props
+	
 	return (
 		<motion.div
 			className={`flex flex-row justify-center items-center gap-1 w-fit h-fit ${
@@ -18,11 +19,11 @@ export const Glanceables = (props: IGlanceables) => {
 			}`}
 		>
 			<MaterialSymbol
-				icon={props.icon}
-				size={props.isActive ? 20 : 16}
-				grade={props.isActive ? -25 : 0}
+				icon={icon}
+				size={isActive ? 20 : 16}
+				grade={isActive ? -25 : 0}
 			/>
-			<span>{props.text}</span>
+			<span>{text}</span>
 		</motion.div>
 	)
 }

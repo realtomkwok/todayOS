@@ -1,7 +1,7 @@
 import { MaterialSymbol, SymbolCodepoints } from "react-material-symbols"
 import { BaseDrawer } from "./Base"
 import { motion, Variants, useAnimationControls } from "motion/react"
-import { transition } from "../../utils/motionUtils"
+import { transition } from "@utils/motionUtils.ts"
 
 interface IApp {
 	icon: SymbolCodepoints
@@ -127,9 +127,9 @@ export const App = (props: IApp) => {
 
 export const AppsDrawer = () => {
 	const apps: Omit<IApp, "state">[] = [
-		{ icon: "call", name: "Phone", role: "secondary" },
-		{ icon: "forum", name: "Message", role: "secondary" },
-		{ icon: "public", name: "Browser", role: "secondary" },
+		{ icon: "call", name: "Phone", role: "primary" },
+		{ icon: "forum", name: "Message", role: "primary" },
+		{ icon: "public", name: "Browser", role: "primary" },
 		{ icon: "waving_hand", name: "Hey!", role: "tertiary" },
 	]
 

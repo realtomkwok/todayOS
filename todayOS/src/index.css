@@ -1,10 +1,10 @@
 /* Import Material Design themes */
-@import "@themes/Bondi/light.css";
-@import "@themes/Bondi/dark.css";
-@import "@themes/Bondi/light-mc.css";
-@import "@themes/Bondi/light-hc.css";
-@import "@themes/Bondi/dark-mc.css";
-@import "@themes/Bondi/dark-hc.css";
+@import "@themes/Le Perouse/light.css";
+@import "@themes/Le Perouse/dark.css";
+@import "@themes/Le Perouse/light-mc.css";
+@import "@themes/Le Perouse/light-hc.css";
+@import "@themes/Le Perouse/dark-mc.css";
+@import "@themes/Le Perouse/dark-hc.css";
 
 @tailwind base;
 @tailwind components;
