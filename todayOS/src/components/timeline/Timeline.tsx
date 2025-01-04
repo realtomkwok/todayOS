@@ -3,6 +3,9 @@ import { useState, useEffect, useRef, useCallback } from "react"
 import { motion } from "motion/react"
 import { transition } from "@/utils/motionUtils"
 import { FAB } from "../buttons/FAB"
+import { TimelineEvent } from "./types"
+import { sampleEvents } from "@/assets/sampleEvents"
+import { AnimatePresence } from "framer-motion"
 
 const MIN_HOUR_HEIGHT = 120
 const OFFSET_FROM_TOP = 0.25
@@ -265,6 +268,46 @@ export const Timeline = () => {
 		},
     }
 
+	const renderEvent = (event: TimelineEvent) => {
+		const startHour = event.startTime.getHours()
+		const startMinute = event.startTime.getMinutes()
+		const heightBeforeHour = getHeightBeforeHour(startHour) + dimensions.paddingTop
+		const eventPosition = heightBeforeHour + (startMinute * dimensions.minuteHeight) + HOUR_LABEL_HEIGHT
+		
+		let eventHeight = dimensions.minuteHeight * 30      // Default 30min height
+		if (event.endTime) {
+			const durationInMinutes =
+				(event.endTime.getTime() - event.startTime.getTime()) / (1000 * 60)
+			eventHeight = dimensions.minuteHeight * durationInMinutes
+        }
+        
+        console.log(startHour, startMinute, heightBeforeHour, eventPosition, eventHeight)
+
+		return (
+			<motion.div
+				key={event.id}
+				className="absolute left-32 right-4 rounded-xl p-3 flex flex-col overflow-clip bg-md-primary-container justify-start"
+				style={{
+					top: `${eventPosition}px`,
+					height: `${eventHeight}px`,
+				}}
+				initial={{ opacity: 0, x: 20 }}
+				animate={{ opacity: 1, x: 0 }}
+				exit={{ opacity: 0, x: -20 }}
+				transition={{ duration: 0.3 }}
+			>
+				<h3 className="text-md-on-surface-container font-display font-medium">
+					{event.title}
+				</h3>
+				{event.description && (
+					<p className="text-md-on-surface-container text-sm">
+						{event.description}
+					</p>
+				)}
+			</motion.div>
+		)
+	}
+
 	return (
 		<div className="w-full h-screen bg flex flex-col overflow-hidden fixed inset-0">
 			{/* Timeline Container */}
@@ -287,7 +330,9 @@ export const Timeline = () => {
 							height: isInteracting.current
 								? "fit-content"
 								: "0.5rem",
-							padding: isInteracting.current ? "0.5rem 1rem" : "0",
+							padding: isInteracting.current
+								? "0.5rem 1rem"
+								: "0",
 							fontSize: isInteracting.current ? "1rem" : "0.5rem",
 							transition: transition.enter,
 						}}
@@ -297,7 +342,7 @@ export const Timeline = () => {
 							padding: "0",
 							fontSize: "0.5rem",
 							transition: transition.exit,
-                        }}
+						}}
 					>
 						<motion.span
 							className="text-xs font-medium font-display text-md-on-error"
@@ -322,13 +367,13 @@ export const Timeline = () => {
 						className="absolute left-4 z-50 flex flex-col items-start"
 						initial={false}
 						animate={{
-                            opacity: isInteracting.current ? 0 : 1,
-                            transition: transition.enter
-                        }}
-                        exit={{
-                            opacity: 0,
-                            transition: transition.exit
-                        }}
+							opacity: isInteracting.current ? 0 : 1,
+							transition: transition.enter,
+						}}
+						exit={{
+							opacity: 0,
+							transition: transition.exit,
+						}}
 					>
 						<motion.span className="absolute -top-6 text-md-on-surface-variant text-xl font-display font-medium tracking-normal">
 							{displayTime.toLocaleDateString("en-US", {
@@ -420,12 +465,13 @@ export const Timeline = () => {
 					>
 						<FAB
 							size="regular"
-							role="secondary"
-							icon="lock"
-							iconAlt="lock_open"
-							text="Lock"
-							textAlt="Unlock"
-							isAlt={isTimelineLocked}
+							role={isTimelineLocked ? "secondary" : "primary"}
+							icon={isTimelineLocked ? "lock_open" : "lock"}
+							text={
+								isTimelineLocked
+									? "Return to Now"
+									: "Lock Timeline"
+							}
 							onClick={() => {
 								setisTimelineLocked((prev) => {
 									// If we're changing from locked to unlocked
@@ -438,7 +484,7 @@ export const Timeline = () => {
 									}
 									return !prev
 								})
-                            }}
+							}}
 						/>
 					</motion.div>
 					{/* Timeline content container */}
@@ -457,40 +503,41 @@ export const Timeline = () => {
 						{/* Timeline vertical line */}
 						<motion.div className="absolute left-4 top-0 bottom-0 w-px bg-md-outline-variant" />
 
-						{/* Hour blocks with dynamic content */}
+						{/* Hour blocks */}
 						{Array.from({ length: 24 }, (_, hour) => {
 							const heightBeforeHour = getHeightBeforeHour(hour)
 
-                            return (
-								<>
-									<div
-										key={hour}
-										ref={(el) =>
-											(hourRefs.current[hour] = el)
-										}
-										className="absolute left-4 right-4 flex flex-row items-start"
-										style={{
-											top: `${
-												heightBeforeHour +
-												dimensions.paddingTop
-											}px`,
-										}}
-									>
-										<div className="flex items-center">
-											<span className="text-xs font-display text-md-on-surface-variant mr-2 w-12  text-right">
-												{`${convertHourToString(
-													hour,
-													true
-												)}`}
-											</span>
-											<div className="w-4 h-px bg-md-outline-variant -ml-px" />
-										</div>
-
-										<div className="flex flex-col w-full"></div>
+							return (
+								<div
+									key={hour}
+									ref={(el) => (hourRefs.current[hour] = el)}
+									className="absolute left-4 right-4 flex flex-row items-start"
+									style={{
+										top: `${
+											heightBeforeHour +
+											dimensions.paddingTop
+										}px`,
+									}}
+								>
+									<div className="flex items-center">
+										<span className="text-xs font-display text-md-on-surface-variant mr-2 w-12 text-right">
+											{`${convertHourToString(
+												hour,
+												true
+											)}`}
+										</span>
+										<div className="w-4 h-px bg-md-outline-variant -ml-px" />
 									</div>
-								</>
+								</div>
 							)
 						})}
+
+						{/* Events */}
+						<div className="absolute top-0 w-full h-full" style={{paddingTop: dimensions.paddingTop}}>
+							<AnimatePresence>
+								{sampleEvents.map(renderEvent)}
+							</AnimatePresence>
+						</div>
 					</div>
 				</motion.div>
 			</div>
