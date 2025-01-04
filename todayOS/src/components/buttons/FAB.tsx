@@ -1,20 +1,17 @@
 import { SymbolCodepoints } from "react-material-symbols"
 import { MaterialSymbol } from "react-material-symbols"
 import { BaseButton } from "./Base"
-import { HTMLMotionProps, AnimatePresence } from "motion/react"
+import { HTMLMotionProps, AnimatePresence, motion } from "motion/react"
+import { transition } from "@/utils/motionUtils"
 
 interface FABProps extends HTMLMotionProps<"button"> {
-	icon: SymbolCodepoints
-	iconAlt?: SymbolCodepoints
-	text?: string
-	textAlt?: string
-	isAlt?: boolean
-
+    icon: SymbolCodepoints
+    text: string
 	size: "small" | "regular" | "large"
 	role: "primary" | "secondary" | "tertiary"
 }
 export const FAB = (props: FABProps) => {
-	const { size, role, icon, text, iconAlt, textAlt, isAlt, ...rest } = props
+	const { size, role, icon, text, ...rest } = props
 
 	const themes: Record<
 		FABProps["role"],
@@ -40,27 +37,16 @@ export const FAB = (props: FABProps) => {
 		large: "w-fit min-w-12 h-fit min-h-12 p-4 rounded-2xl",
 	}
 
-    return (
+	return (
 		<AnimatePresence>
 			<BaseButton
 				className={`bg-primary-container text-primary ${themes[role].container} ${styles[size]}`}
 				{...rest}
-			>
-				{isAlt && iconAlt ? (
-					<MaterialSymbol fill icon={iconAlt} />
-				) : (
-					<MaterialSymbol fill icon={icon} />
-                )}
-
-				{isAlt && textAlt ? (
-					<span className="text-md-on-surface-variant text-sm font-display font-medium tracking-normal">
-						{textAlt}
+            >
+                    <MaterialSymbol fill icon={icon} />
+                    <span className="text-md-on-surface-variant text-sm font-sans font-medium tracking-normal">
+                        {text}
 					</span>
-				) : (
-					<span className="text-md-on-surface-variant text-sm font-display font-medium tracking-normal">
-						{text}
-					</span>
-				)}
 			</BaseButton>
 		</AnimatePresence>
 	)

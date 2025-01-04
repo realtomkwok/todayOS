@@ -25,7 +25,8 @@ export const Timeline = () => {
 	const containerRef = useRef<HTMLDivElement | null>(null)
 	const hourRefs = useRef<Array<HTMLDivElement | null>>(Array(24).fill(null))
 	const scrollTimeoutRef = useRef<number | null>(null)
-	const isScrolling = useRef(false)
+    const isScrolling = useRef(false)
+    const isInteracting = useRef(false)
 
 	// Calculate heights of all hour blocks
 	const calculateHeights = () => {
@@ -181,7 +182,24 @@ export const Timeline = () => {
 				isScrolling.current = false
 			}, 300) // Shorter timeout for locked state
 		}
-	}
+    }
+    
+    // Add event listeners to detect user interaction
+    useEffect(() => {
+        const handleInteraction = () => {
+            isInteracting.current = true
+        }
+
+        document.addEventListener("touchstart", handleInteraction)
+        document.addEventListener("pointerdown", handleInteraction)
+        document.addEventListener("pointerup", handleInteraction)
+
+        return () => {
+            document.removeEventListener("touchstart", handleInteraction)
+            document.removeEventListener("pointerdown", handleInteraction)
+            document.removeEventListener("pointerup", handleInteraction)
+        }
+    }, [])
 
 	// Auto-update current time
 	useEffect(() => {
@@ -243,7 +261,7 @@ export const Timeline = () => {
 		visible: {
 			opacity: 1,
 		},
-	}
+    }
 
 	return (
 		<div className="w-full h-screen bg flex flex-col overflow-hidden fixed inset-0">
@@ -396,12 +414,9 @@ export const Timeline = () => {
 					>
 						<FAB
 							size="regular"
-							role="secondary"
-							icon="lock"
-							iconAlt="lock_open"
-							text="Lock"
-							textAlt="Unlock"
-							isAlt={isTimelineLocked}
+							role={isTimelineLocked ? "secondary" : "primary"}
+							icon={isTimelineLocked ? "lock_open" : "lock"}
+							text={isTimelineLocked ? "Unlock Timeline" : "Lock Timeline"}
 							onClick={() => {
 								setisTimelineLocked((prev) => {
 									// If we're changing from locked to unlocked
@@ -414,7 +429,7 @@ export const Timeline = () => {
 									}
 									return !prev
 								})
-							}}
+                            }}
 						/>
 					</motion.div>
 					{/* Timeline content container */}
