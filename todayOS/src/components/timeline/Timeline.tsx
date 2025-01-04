@@ -144,29 +144,42 @@ export const Timeline = () => {
 		}
 	}, [dimensions])
 
+	// Add a useEffect to watch lock state changes
+	useEffect(() => {
+		// If timeline becomes locked, cancel any pending scroll timeout
+		if (isTimelineLocked && scrollTimeoutRef.current) {
+			clearTimeout(scrollTimeoutRef.current)
+			isScrolling.current = false
+		}
+	}, [isTimelineLocked])
+
 	// Handle scroll with debounce
 	const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
 		isScrolling.current = true
 		const newTime = getTimeFromScrollPosition(e.currentTarget.scrollTop)
 		setDisplayTime(newTime)
 
-		if (scrollTimeoutRef.current && !isTimelineLocked) {
+		if (scrollTimeoutRef.current) {
 			clearTimeout(scrollTimeoutRef.current)
 		}
 
-		// Only set timeout if not locked
+		// Only set timeout if not currently locked
 		if (!isTimelineLocked) {
-			scrollTimeoutRef.current = window.setTimeout(() => {
-				const now = new Date()
-				setDisplayTime(now)
-				scrollToTime(now)
+			scrollTimeoutRef.current = window.setTimeout(async () => {
+				// Double-check lock state before executing scroll
+				if (!isTimelineLocked) {
+					const now = new Date()
+					setDisplayTime(now)
+					scrollToTime(now)
+					console.log("Scroll to time after 3 seconds")
+				}
 				isScrolling.current = false
 			}, 3000)
 		} else {
-			// If locked, just clear scrolling state after delay
+			// If already locked, just reset scrolling state after a short delay
 			scrollTimeoutRef.current = window.setTimeout(() => {
 				isScrolling.current = false
-			}, 3000)
+			}, 300) // Shorter timeout for locked state
 		}
 	}
 
@@ -190,6 +203,7 @@ export const Timeline = () => {
 				if (!isTimelineLocked && !isScrolling.current) {
 					setDisplayTime(newDate)
 					requestAnimationFrame(() => {
+						console.log("Scroll to time")
 						scrollToTime(newDate)
 					})
 				}
@@ -207,20 +221,20 @@ export const Timeline = () => {
 		setDisplayTime(now)
 
 		// Only scroll when dimensions are properly calculated
-		if (dimensions.totalHeight > 0 && !isTimelineLocked) {
+		if (dimensions.totalHeight > 0) {
 			// Add a small delay to ensure DOM is ready
 			requestAnimationFrame(() => {
 				scrollToTime(now)
 			})
 		}
-	}, [dimensions.totalHeight])
+	}, [dimensions, scrollToTime])
 
 	// State monitor
 	useEffect(() => {
 		console.log(
 			`Timeline locked state: ${isTimelineLocked}, Timeline is scrolling: ${isScrolling.current}`
 		)
-	}, [isTimelineLocked, isScrolling.current])
+	}, [isTimelineLocked, isScrolling])
 
 	const timelineAnimationVariants = {
 		initial: {
@@ -277,17 +291,11 @@ export const Timeline = () => {
 							}}
 							transition={transition.enter}
 						>
-							{isScrolling.current
-								? displayTime.toLocaleTimeString([], {
-										hour: "numeric",
-										minute: "2-digit",
-										hour12: true,
-								  })
-								: new Date().toLocaleTimeString([], {
-										hour: "numeric",
-										minute: "2-digit",
-										hour12: true,
-								  })}
+							{displayTime.toLocaleTimeString([], {
+								hour: "numeric",
+								minute: "2-digit",
+								hour12: true,
+							})}
 						</motion.span>
 					</motion.div>
 					<motion.div
@@ -299,7 +307,7 @@ export const Timeline = () => {
 						transition={transition.enter}
 					>
 						<motion.span className="absolute -top-6 text-md-on-surface-variant text-xl font-display font-medium tracking-normal">
-							{new Date().toLocaleDateString("en-US", {
+							{displayTime.toLocaleDateString("en-US", {
 								weekday: "short",
 								month: "short",
 								day: "numeric",
@@ -307,7 +315,7 @@ export const Timeline = () => {
 						</motion.span>
 						<div
 							className={`flex justify-center gap-2 ${
-								new Date().getHours() < 12 //if AM, align to top, else align to bottom
+								displayTime.getHours() < 12 //if AM, align to top, else align to bottom
 									? "items-start "
 									: "items-end"
 							}`}
@@ -342,7 +350,7 @@ export const Timeline = () => {
 							</motion.span>
 							<motion.span className="text-md-on-surface-variant text-xl font-display font-medium tracking-normal">
 								{
-									displayTime
+									new Date()
 										.toLocaleTimeString([], {
 											hour: "numeric",
 											minute: "2-digit",
@@ -395,7 +403,17 @@ export const Timeline = () => {
 							textAlt="Unlock"
 							isAlt={isTimelineLocked}
 							onClick={() => {
-								setisTimelineLocked((prev) => !prev)
+								setisTimelineLocked((prev) => {
+									// If we're changing from locked to unlocked
+									if (prev) {
+										// Use setTimeout to ensure state has updated before scrolling
+										setTimeout(() => {
+											setDisplayTime(new Date())
+											scrollToTime(new Date())
+										}, 0)
+									}
+									return !prev
+								})
 							}}
 						/>
 					</motion.div>
