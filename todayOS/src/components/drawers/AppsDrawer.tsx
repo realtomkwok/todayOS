@@ -11,7 +11,6 @@ interface IApp {
 }
 
 export const App = (props: IApp) => {
-
 	const textAnimationControl = useAnimationControls()
 	const stateAnimationControl = useAnimationControls()
 
@@ -23,7 +22,7 @@ export const App = (props: IApp) => {
 			opacity: 0.8,
 		},
 		pressed: {
-			opacity: 0.10,
+			opacity: 0.1,
 		},
 		drag: {
 			opacity: 0.16,
@@ -46,13 +45,13 @@ export const App = (props: IApp) => {
 	}
 
 	const handleTapStart = () => {
-		textAnimationControl.start("visible")
-		stateAnimationControl.start("pressed")
+		textAnimationControl.start("visible").catch(console.error)
+		stateAnimationControl.start("pressed").catch(console.error)
 	}
 
 	const handleTapCancel = () => {
-		textAnimationControl.start("hidden")
-		stateAnimationControl.start("initial")
+		textAnimationControl.start("hidden").catch(console.error)
+		stateAnimationControl.start("initial").catch(console.error)
 	}
 
 	const themes: Record<IApp["role"], Record<"container" | "state", string>> = {
@@ -75,7 +74,7 @@ export const App = (props: IApp) => {
 			// Container
 			<div
 				className={`${
-					themes[props.role]["container"]
+					themes[props.role].container
 				} flex flex-col items-center justify-center rounded-full overflow-hidden w-full h-full relative`}
 			>
 				{/* Icon */}
@@ -89,7 +88,7 @@ export const App = (props: IApp) => {
 				{/* State Layer */}
 				<motion.div
 					className={`absolute inset-0 ${
-						themes[props.role]["state"]
+						themes[props.role].state
 					} rounded-full`}
 					variants={stateMotion}
 					initial="initial"
@@ -103,15 +102,15 @@ export const App = (props: IApp) => {
 		<motion.div
 			className="flex flex-col justify-center items-center basis-1/4 min-w-16"
 			whileTap={{
-					flexBasis: "50%",
-					y: -24,
-					zIndex: 100,
-					// transition: transition.enter,
+				flexBasis: "50%",
+				y: -24,
+				zIndex: 100,
+				// transition: transition.enter,
 			}}
 			onTapStart={handleTapStart}
 			onTap={handleTapCancel}
 			onTapCancel={handleTapCancel}
-			>
+		>
 			<motion.span
 				className="relative -top-10 py-1 px-3 rounded-full text-2xs font-sans font-semibold tracking-normal bg-md-surface-container-highest text-md-on-surface-variant"
 				variants={textMotion}

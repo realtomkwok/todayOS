@@ -43,9 +43,9 @@ export const transition = {
 }
 
 export const stateLayerOpacity = {
-    initial: 0,
+	initial: 0,
 	hover: 0.08,
-    focus: 0.1,
-    press: 0.1,
-    drag: 0.16
+	focus: 0.1,
+	press: 0.1,
+	drag: 0.16,
 }

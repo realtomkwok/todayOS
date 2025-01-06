@@ -4,8 +4,8 @@ import { BaseButton } from "./Base"
 import { HTMLMotionProps, AnimatePresence } from "motion/react"
 
 interface FABProps extends HTMLMotionProps<"button"> {
-    icon: SymbolCodepoints
-    text: string
+	icon: SymbolCodepoints
+	text: string
 	size: "small" | "regular" | "large"
 	role: "primary" | "secondary" | "tertiary"
 }
@@ -17,16 +17,16 @@ export const FAB = (props: FABProps) => {
 		Record<"container" | "state", string>
 	> = {
 		primary: {
-			container: "bg-md-primary-fixed text-md-on-primary-fixed",
-			state: "bg-md-on-primary-fixed",
+			container: "bg-md-primary text-md-on-primary",
+			state: "bg-md-on-primary",
 		},
 		secondary: {
-			container: "bg-md-secondary-fixed text-md-on-secondary-fixed",
-			state: "bg-md-on-secondary-fixed",
+			container: "bg-md-secondary text-md-on-secondary",
+			state: "bg-md-on-secondary",
 		},
 		tertiary: {
-			container: "bg-md-tertiary-fixed text-md-on-tertiary-fixed",
-			state: "bg-md-on-tertiary-fixed",
+			container: "bg-md-tertiary text-md-on-tertiary",
+			state: "bg-md-on-tertiary",
 		},
 	}
 
@@ -41,11 +41,11 @@ export const FAB = (props: FABProps) => {
 			<BaseButton
 				className={`${themes[role].container} ${styles[size]}`}
 				{...rest}
-            >
-                    <MaterialSymbol fill icon={icon} />
-                    <span className="text-sm font-sans font-medium tracking-normal">
-                        {text}
-					</span>
+			>
+				<MaterialSymbol fill icon={icon} />
+				<span className="text-sm font-sans font-medium tracking-normal">
+					{text}
+				</span>
 			</BaseButton>
 		</AnimatePresence>
 	)

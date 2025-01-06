@@ -3,9 +3,12 @@ import { UIEvent, useCallback, useEffect, useRef, useState } from "react"
 import { motion } from "motion/react"
 import { transition } from "@/utils/motionUtils"
 import { FAB } from "../buttons/FAB"
-import { sampleEvents, ITimelineEvent } from "@/assets/sampleEvents"
+import { ITimelineEvent, sampleEvents } from "@/assets/sampleEvents"
 import { AnimatePresence } from "framer-motion"
 import { Event } from "@/components/cards/Event"
+import { Now } from "./Now"
+import { Indicator } from "./Indicator"
+import { MaterialSymbol } from "react-material-symbols"
 
 const MIN_HOUR_HEIGHT = 120
 const OFFSET_FROM_TOP = 0.25
@@ -26,15 +29,15 @@ export const Timeline = () => {
 
 	const timelineRef = useRef<HTMLDivElement | null>(null)
 	const containerRef = useRef<HTMLDivElement | null>(null)
-	const hourRefs = useRef<Array<HTMLDivElement | null>>(Array(24).fill(null))
+	const hourRefs = useRef<HTMLDivElement[] | null>(Array(24).fill(null))
 	const scrollTimeoutRef = useRef<number | null>(null)
 	const isScrolling = useRef(false)
 	const isInteracting = useRef(false)
 
 	// Calculate heights of all hour blocks
 	const calculateHeights = () => {
-		const newHourHeights = hourRefs.current.map((ref) => {
-			if (ref && ref.offsetHeight) {
+		const newHourHeights = hourRefs.current!.map((ref) => {
+			if (ref?.offsetHeight) {
 				return Math.max(MIN_HOUR_HEIGHT, ref.offsetHeight)
 			}
 			return MIN_HOUR_HEIGHT // Default height
@@ -83,12 +86,10 @@ export const Timeline = () => {
 	// Get cumulative height up to a specific hour
 	const getHeightBeforeHour = useCallback(
 		(hour: number) => {
-			return (
-				dimensions.hourHeights
-					.slice(0, hour)
-					.reduce((sum, height) => sum + height, 0) +
-				hour * HOUR_LABEL_HEIGHT
-			)
+			return (dimensions.hourHeights
+				.slice(0, hour)
+				.reduce((sum: number, height: number) => sum + height, 0) +
+				hour * HOUR_LABEL_HEIGHT) as number
 		},
 		[dimensions]
 	)
@@ -116,7 +117,8 @@ export const Timeline = () => {
 		let remainingPixels = adjustedPosition
 
 		for (let hour = 0; hour < 24; hour++) {
-			const hourHeight = dimensions.hourHeights[hour] + HOUR_LABEL_HEIGHT
+			const hourHeight = (dimensions.hourHeights[hour] +
+				HOUR_LABEL_HEIGHT) as number
 			if (accumulatedHeight + hourHeight > adjustedPosition) {
 				targetHour = hour
 				remainingPixels = adjustedPosition - accumulatedHeight
@@ -146,7 +148,7 @@ export const Timeline = () => {
 			const heightBeforeHour = getHeightBeforeHour(hours)
 
 			// Calculate position within the hour
-			const hourHeight = dimensions.hourHeights[hours]
+			const hourHeight = dimensions.hourHeights[hours] as number
 			const minutePosition = (minutes / 60) * hourHeight
 
 			return heightBeforeHour + minutePosition
@@ -159,9 +161,7 @@ export const Timeline = () => {
 			if (timelineRef.current && dimensions.totalHeight > 0) {
 				const position = getScrollPositionForTime(time)
 				timelineRef.current.scrollTop =
-					position +
-					dimensions.paddingTop -
-					dimensions.indicatorOffset
+					position + dimensions.paddingTop - dimensions.indicatorOffset
 				timelineRef.current.style.scrollBehavior = "smooth"
 			}
 		},
@@ -189,7 +189,7 @@ export const Timeline = () => {
 
 		// Only set timeout if not currently locked
 		if (!isTimelineLocked) {
-			scrollTimeoutRef.current = window.setTimeout(async () => {
+			scrollTimeoutRef.current = window.setTimeout(() => {
 				isInteracting.current = false
 				// Double-check lock state before executing scroll
 				if (!isTimelineLocked) {
@@ -289,6 +289,11 @@ export const Timeline = () => {
 		},
 	}
 
+	const tomorrow = new Date(displayTime.getTime() + 24 * 60 * 60 * 1000)
+	const tomorrowEvents = sampleEvents.filter(
+		(event) => event.startTime.getDate() === tomorrow.getDate()
+	)
+
 	return (
 		<div className="w-full h-screen bg flex flex-col overflow-hidden fixed inset-0">
 			{/* Timeline Container */}
@@ -297,132 +302,14 @@ export const Timeline = () => {
 				className="relative flex-1 min-h-0 overflow-hidden"
 			>
 				{/* Fixed time indicator */}
-				<div
-					className="absolute left-4 right-0 flex items-center z-10"
-					style={{ top: `${OFFSET_FROM_TOP * 100}%` }}
-				>
-					<motion.div
-						className="w-2 h-2 rounded-full bg-md-error -ml-1 flex justify-center items-center z-20"
-						initial={false}
-						animate={{
-							width: isInteracting.current
-								? "fit-content"
-								: "0.5rem",
-							height: isInteracting.current
-								? "fit-content"
-								: "0.5rem",
-							padding: isInteracting.current
-								? "0.5rem 1rem"
-								: "0",
-							fontSize: isInteracting.current ? "1rem" : "0.5rem",
-							transition: transition.enter,
-						}}
-						exit={{
-							width: "0.5rem",
-							height: "0.5rem",
-							padding: "0",
-							fontSize: "0.5rem",
-							transition: transition.exit,
-						}}
-					>
-						<motion.span
-							className="text-xs font-medium font-display text-md-on-error"
-							initial={{
-								opacity: 0,
-								scale: 0,
-							}}
-							animate={{
-								opacity: isInteracting.current ? 1 : 0,
-								scale: isInteracting.current ? 1 : 0,
-							}}
-							transition={transition.enter}
-						>
-							{displayTime.toLocaleTimeString([], {
-								hour: "numeric",
-								minute: "2-digit",
-								hour12: true,
-							})}
-						</motion.span>
-					</motion.div>
-					<motion.div
-						className="absolute left-4 z-50 flex flex-col items-start"
-						initial={false}
-						animate={{
-							opacity: isInteracting.current ? 0 : 1,
-							transition: transition.enter,
-						}}
-						exit={{
-							opacity: 0,
-							transition: transition.exit,
-						}}
-					>
-						<motion.span className="absolute -top-6 text-md-on-surface-variant text-xl font-display font-medium tracking-normal">
-							{displayTime.toLocaleDateString("en-US", {
-								weekday: "short",
-								month: "short",
-								day: "numeric",
-							})}
-						</motion.span>
-						<div
-							className={`flex justify-center gap-2 ${
-								displayTime.getHours() < 12 //if AM, align to top, else align to bottom
-									? "items-start "
-									: "items-end"
-							}`}
-						>
-							<motion.span
-								className="text-md-on-surface text-8xl font-display font-extrabold tracking-normal"
-								initial={{
-									fontVariationSettings: `'opsz' 32, 'wdth' 75, 'wght' 200`,
-								}}
-								animate={{
-									fontVariationSettings:
-										!isInteracting.current ||
-										!isInteracting.current
-											? `'opsz' 24, 'wdth' 75, 'wght' 800`
-											: `'opsz' 32, 'wdth' 75, 'wght' 200`,
-									transition: transition.enter,
-								}}
-								exit={{
-									fontVariationSettings: `'opsz' 32, 'wdth' 75, 'wght' 200`,
-									transition: transition.exit,
-								}}
-							>
-								{
-									displayTime
-										.toLocaleTimeString([], {
-											hour: "numeric",
-											minute: "2-digit",
-											hour12: true,
-										})
-										.split(" ")[0]
-								}
-							</motion.span>
-							<motion.span className="text-md-on-surface-variant text-xl font-display font-medium tracking-normal">
-								{
-									displayTime
-										.toLocaleTimeString([], {
-											hour: "numeric",
-											minute: "2-digit",
-											hour12: true,
-										})
-										.split(" ")[1]
-								}
-							</motion.span>
-						</div>
-					</motion.div>
-					<div className="absolute w-screen -left-4 h-px bg-md-error flex-grow" />
-				</div>
+				<Indicator
+					offsetFromTop={OFFSET_FROM_TOP}
+					isInteracting={isInteracting}
+					displayTime={displayTime}
+				/>
 
-				{/* Now activities */}
-				<div
-					className="absolute flex w-full h-fit px-4 mt-8"
-					style={{ top: `${OFFSET_FROM_TOP * 100}% ` }}
-				>
-					<div className="flex flex-col items-center justify-center w-full h-full">
-						<div></div>
-					</div>
-				</div>
+				{/* Now */}
+				<Now offsetFromTop={OFFSET_FROM_TOP} isInteracting={isInteracting} />
 
 				{/* Scrollable timeline */}
 				<motion.div
@@ -453,7 +340,7 @@ export const Timeline = () => {
 									weekday: "short",
 									month: "short",
 									day: "numeric",
-								})}{" "}
+								})}
 							</span>
 						</div>
 						{/* Lock button to prevent scrolling back to the current time */}
@@ -461,11 +348,7 @@ export const Timeline = () => {
 							size="regular"
 							role={isTimelineLocked ? "secondary" : "primary"}
 							icon={isTimelineLocked ? "lock_open" : "lock"}
-							text={
-								isTimelineLocked
-									? "Return to Now"
-									: "Lock Timeline"
-							}
+							text={isTimelineLocked ? "Return to Now" : "Lock Timeline"}
 							onClick={() => {
 								setTimelineLocked((prev) => {
 									// If we're changing from locked to unlocked
@@ -505,21 +388,19 @@ export const Timeline = () => {
 							return (
 								<div
 									key={hour}
-									ref={(el) => (hourRefs.current[hour] = el)}
+									ref={(el) => {
+										if (hourRefs.current) {
+											hourRefs.current[hour] = el!
+										}
+									}}
 									className="absolute left-4 right-4 flex flex-row items-start h-fit"
 									style={{
-										top: `${
-											heightBeforeHour +
-											dimensions.paddingTop
-										}px`,
+										top: `${heightBeforeHour + dimensions.paddingTop}px`,
 									}}
 								>
 									<div className="flex items-center">
 										<span className="text-xs font-display text-md-on-surface-variant mr-2 w-12 text-right">
-											{`${convertHourToString(
-												hour,
-												true
-											)}`}
+											{`${convertHourToString(hour, true)}`}
 										</span>
 										<div className="w-4 h-px bg-md-outline-variant -ml-px" />
 									</div>
@@ -531,32 +412,55 @@ export const Timeline = () => {
 						<div
 							className="absolute left-4 right-4 flex flex-row items-start h-fit"
 							style={{
-								top: `${
-									getHeightBeforeHour(24) +
-									dimensions.paddingTop
-								}px`,
+								top: `${getHeightBeforeHour(24) + dimensions.paddingTop}px`,
 							}}
 						>
-							<div className="flex flex-row items-left justify-start w-full mt-12 px-2 py-4">
-								<div className="flex flex-col items-left">
-									<span className="text-md-on-surface text-xl font-display font-semibold tracking-tight">
-										Tomorrow
-									</span>
-									<span className="text-md-on-surface-variant text-sm font-display font-regular tracking-normal">
-										{new Date(
-											displayTime.getTime() +
-												24 * 60 * 60 * 1000
-										).toLocaleDateString("en-US", {
-											weekday: "short",
-											month: "short",
-											day: "numeric",
-										})}
+							<div className="flex flex-col items-left justify-start w-full h-fit mt-12 gap-4">
+								<div className="flex flex-row items-center">
+									<div className="w-full flex flex-col items-left">
+										<span className="text-md-on-surface text-xl font-display font-semibold tracking-tight">
+											Tomorrow
+										</span>
+										<span className="text-md-on-surface-variant text-sm font-display font-regular tracking-normal">
+											{tomorrow.toLocaleDateString("en-US", {
+												weekday: "short",
+												month: "short",
+												day: "numeric",
+											})}
+										</span>
+									</div>
+									<span className="text-md-secondary text-xl flex flex-row items-center gap-2 rounded-full px-4 py-1">
+										<MaterialSymbol icon="sunny" fill />
+										<span className="text-xl font-medium">76°</span>
 									</span>
 								</div>
-								<div className="flex-1 ml-4">
-									<div className="text-md-on-surface-variant text-sm">
-										3 upcoming events
-									</div>
+
+								<div className="relative w-full flex flex-col items-left justify-start gap-2 pl-28">
+									{tomorrowEvents.map((event) => {
+										return (
+											<div
+												key={event.id}
+												className="flex flex-col items-left justify-start w-full bg-md-surface-container-low px-4 py-3 rounded-2xl border-b border-md-outline-variant"
+											>
+												<span className="text-md-on-surface-variant text-xs font-display font-regular tracking-normal">
+													{event.startTime.toLocaleTimeString([], {
+														hour: "numeric",
+														minute: "2-digit",
+														hour12: true,
+													})}
+													{" - "}
+													{event.endTime?.toLocaleTimeString([], {
+														hour: "numeric",
+														minute: "2-digit",
+														hour12: true,
+													})}
+												</span>
+												<span className="text-md-on-surface text-sm font-display font-regular tracking-normal">
+													{event.title}
+												</span>
+											</div>
+										)
+									})}
 								</div>
 							</div>
 						</div>
@@ -569,32 +473,25 @@ export const Timeline = () => {
 							<AnimatePresence>
 								{sampleEvents.map((event: ITimelineEvent) => {
 									const startHour = event.startTime.getHours()
-									const startMinute =
-										event.startTime.getMinutes()
+									const startMinute = event.startTime.getMinutes()
 									const heightBeforeHour =
-										getHeightBeforeHour(startHour) +
-										dimensions.paddingTop
+										getHeightBeforeHour(startHour) + dimensions.paddingTop
 									const durationInHours = event.endTime
-										? (event.endTime.getTime() -
-												event.startTime.getTime()) /
-										  (1000 * 60 * 60)
+										? (event.endTime.getTime() - event.startTime.getTime()) /
+											(1000 * 60 * 60)
 										: 0
-									const durationInMinutes =
-										durationInHours * 60
+									const durationInMinutes = durationInHours * 60
 									const durationInPixels =
-										durationInMinutes *
-										dimensions.minuteHeight
+										durationInMinutes * dimensions.minuteHeight
 									const eventPosition =
 										heightBeforeHour +
 										startMinute * dimensions.minuteHeight +
 										HOUR_LABEL_HEIGHT
 
-									let eventHeight =
-										dimensions.minuteHeight * 30 // Default 30min height
+									let eventHeight = dimensions.minuteHeight * 30 // Default 30min height
 									if (event.endTime) {
 										eventHeight =
-											durationInPixels +
-											HOUR_LABEL_HEIGHT * durationInHours
+											durationInPixels + HOUR_LABEL_HEIGHT * durationInHours
 									}
 
 									return (
