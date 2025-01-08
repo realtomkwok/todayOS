@@ -56,10 +56,6 @@ export const JustType = () => {
 				duration: 0.3,
 			},
 		},
-		tap: {
-			scale: 0.9,
-			transition: transition.enter,
-		},
 	}
 
 	const Inactive = (props: MotionProps) => {
@@ -67,7 +63,7 @@ export const JustType = () => {
 			<motion.div
 				className="absolute flex items-center justify-left bg-md-tertiary-fixed text-md-on-tertiary-fixed rounded-3xl z-[20] cursor-pointer"
 				// onClick={handleActivate}
-				whileTap={{ scale: 0.9 }}
+				whileTap={{ scale: 1.1, y: -8 }}
 				{...props}
 				onTap={handleActivate}
 				onTapCancel={() => setIsActive(false)}
@@ -126,7 +122,7 @@ export const JustType = () => {
 						<>
 							<motion.ul
 								key="active-container"
-								className="relative -top-24 left-0 w-full h-fit flex flex-col gap-4 z-[90] "
+								className="relative -top-20 left-0 w-full h-fit flex flex-col gap-4 z-[90] "
 								variants={containerVariants}
 								initial="hidden"
 								animate="show"
@@ -136,7 +132,6 @@ export const JustType = () => {
 									<motion.li
 										key={index}
 										variants={itemsVariants}
-										whileTap="tap"
 										className="relative flex items-center justify-left bg-md-surface-container-high text-md-on-surface-variant border border-md-outline-variant rounded-3xl z-[80] w-fit h-fit px-4 py-2 gap-2"
 									>
 										<span className="font-sans text-sm font-medium tracking-tight italic w-fit">

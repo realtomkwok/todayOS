@@ -31,3 +31,9 @@
 		}
 	}
 }
+
+@layer components {
+	.elevation-0 {
+		@apply shadow
+	}
+}

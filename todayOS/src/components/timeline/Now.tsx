@@ -34,7 +34,7 @@ const Glaceable = (props: {
 
 	return (
 		<div
-			className={`flex flex-row items-center justify-left gap-2 text-md-primary text-sm font-display tracking-normal rounded-full px-4 py-2 font-semibold w-fit`}
+			className={`flex flex-row items-center justify-left gap-2 text-md-primary text-sm font-sans tracking-normal rounded-full px-4 py-2 font-medium w-fit`}
 		>
 			<MaterialSymbol icon={props.icon} fill size={20} />
 			<span>{props.text}</span>

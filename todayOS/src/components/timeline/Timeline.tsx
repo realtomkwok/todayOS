@@ -1,14 +1,17 @@
 import { convertHourToString } from "@/utils/convertTime"
 import { UIEvent, useCallback, useEffect, useRef, useState } from "react"
-import { motion } from "motion/react"
+import { motion, Variants } from "motion/react"
 import { transition } from "@/utils/motionUtils"
-import { FAB } from "../buttons/FAB"
+import { FAB } from "@/components/buttons/FAB"
 import { ITimelineEvent, sampleEvents } from "@/assets/sampleEvents"
 import { AnimatePresence } from "framer-motion"
 import { Event } from "@/components/cards/Event"
-import { Now } from "./Now"
-import { Indicator } from "./Indicator"
+import { Now } from "@/components/timeline/Now"
+import { Indicator } from "@/components/timeline/Indicator"
 import { MaterialSymbol } from "react-material-symbols"
+import { Switch } from "@/components/buttons/Switch"
+import { BaseButton } from "../buttons/Base"
+import { IconButton } from "../buttons/IconButtons"
 
 const MIN_HOUR_HEIGHT = 120
 const OFFSET_FROM_TOP = 0.25
@@ -280,7 +283,7 @@ export const Timeline = () => {
 		)
 	}, [isTimelineLocked, isScrolling])
 
-	const timelineAnimationVariants = {
+	const timelineAnimationVariants: Variants = {
 		initial: {
 			opacity: 0.24,
 		},
@@ -331,43 +334,51 @@ export const Timeline = () => {
 								: { opacity: 0, transition: transition.exit }
 						}
 					>
-						<div className="relative flex flex-col items-left left-2 ">
-							<span className="text-md-on-surface text-xl font-display font-semibold tracking-tight">
-								Today
-							</span>
-							<span className="text-md-on-surface-variant text-sm font-display font-regular tracking-normal">
-								{displayTime.toLocaleDateString("en-US", {
-									weekday: "short",
-									month: "short",
-									day: "numeric",
-								})}
-							</span>
+						<div className="flex flex-row items-center gap-2">
+							<IconButton icon="chevron_left" style="standard" />
+							<IconButton icon="chevron_right" style="standard" />
+							<div className="relative flex flex-col items-left ">
+								<span className="w-20 text-md-on-surface text-xl font-display font-semibold tracking-tight">
+									Today
+								</span>
+								<span className="text-md-on-surface-variant text-sm font-display font-regular tracking-normal">
+									{displayTime.toLocaleDateString("en-US", {
+										weekday: "short",
+										month: "short",
+										day: "numeric",
+									})}
+								</span>
+							</div>
 						</div>
+
 						{/* Lock button to prevent scrolling back to the current time */}
-						<FAB
-							size="regular"
-							role={isTimelineLocked ? "secondary" : "primary"}
-							icon={isTimelineLocked ? "lock_open" : "lock"}
-							text={isTimelineLocked ? "Return to Now" : "Lock Timeline"}
-							onClick={() => {
-								setTimelineLocked((prev) => {
-									// If we're changing from locked to unlocked
-									if (prev) {
-										// Use setTimeout to ensure state has updated before scrolling
-										setTimeout(() => {
-											setDisplayTime(new Date())
-											scrollToTime(new Date())
-										}, 0)
-									}
-									return !prev
-								})
-							}}
-						/>
+						<div className="flex flex-row items-center gap-2">
+							<BaseButton>
+								<MaterialSymbol icon="event" />
+							</BaseButton>
+							<Switch
+								icon={isTimelineLocked ? "lock" : "lock_open"}
+								hasIcon={true}
+								state={isTimelineLocked ? "on" : "off"}
+								onClick={() => {
+									setTimelineLocked((prev) => {
+										if (prev) {
+											setTimeout(() => {
+												setDisplayTime(new Date())
+												scrollToTime(new Date())
+											}, 0)
+										}
+
+										return !prev
+									})
+								}}
+							/>
+						</div>
 					</motion.div>
 
 					{/* Timeline content container */}
 					<div
-						className="relative"
+						className="relative flex flex-col items-center justify-start"
 						style={{
 							height: `${
 								dimensions.totalHeight +
@@ -378,6 +389,14 @@ export const Timeline = () => {
 							paddingBottom: `${dimensions.paddingBottom}px`,
 						}}
 					>
+						{isTimelineLocked && (
+							<div className="fixed flex flex-col w-fit items-center justify-end top-20 px-4 py-2 bg-md-inverse-surface rounded-2xl z-50">
+								<span className="text-md-inverse-on-surface text-sm font-sans font-regular tracking-normal">
+									Timeline Locked
+								</span>
+							</div>
+						)}
+
 						{/* Timeline vertical line */}
 						<motion.div className="absolute left-4 top-0 bottom-0 w-px bg-md-outline-variant opacity-50" />
 
@@ -416,7 +435,7 @@ export const Timeline = () => {
 							}}
 						>
 							<div className="flex flex-col items-left justify-start w-full h-fit mt-12 gap-4">
-								<div className="flex flex-row items-center">
+								<div className="flex flex-row items-center w-full p-2">
 									<div className="w-full flex flex-col items-left">
 										<span className="text-md-on-surface text-xl font-display font-semibold tracking-tight">
 											Tomorrow
@@ -429,7 +448,7 @@ export const Timeline = () => {
 											})}
 										</span>
 									</div>
-									<span className="text-md-secondary text-xl flex flex-row items-center gap-2 rounded-full px-4 py-1">
+									<span className="text-md-secondary text-xl flex flex-row items-center gap-2 rounded-full">
 										<MaterialSymbol icon="sunny" fill />
 										<span className="text-xl font-medium">76°</span>
 									</span>
