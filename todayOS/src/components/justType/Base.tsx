@@ -61,7 +61,7 @@ export const JustType = () => {
 	const Inactive = (props: MotionProps) => {
 		return (
 			<motion.div
-				className="absolute flex items-center justify-left bg-md-tertiary-fixed text-md-on-tertiary-fixed rounded-3xl z-[20] cursor-pointer"
+				className="absolute flex items-center justify-left bg-md-primary text-md-on-primary rounded-3xl z-[20] cursor-pointer"
 				// onClick={handleActivate}
 				whileTap={{ scale: 1.1, y: -8 }}
 				{...props}
@@ -94,7 +94,7 @@ export const JustType = () => {
 						}
 					}}
 				/>
-				<BaseButton className="bg-md-secondary-container text-md-on-secondary-container p-4 rounded-3xl mr-1">
+				<BaseButton className="bg-md-secondary-container text-md-on-secondary-container p-4 rounded-3xl mr-1 w-16">
 					<MaterialSymbol icon="graphic_eq" fill size={20} />
 				</BaseButton>
 			</motion.div>
@@ -102,7 +102,7 @@ export const JustType = () => {
 	}
 
 	return (
-		<div className="w-full relative">
+		<div className="w-full relative h-fit">
 			<AnimatePresence mode="wait">
 				{isActive && (
 					<motion.div

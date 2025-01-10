@@ -75,16 +75,10 @@ export const App = (props: IApp) => {
 			<div
 				className={`${
 					themes[props.role].container
-				} flex flex-col items-center justify-center rounded-full overflow-hidden w-full h-full relative`}
+				} flex flex-col items-center justify-center rounded-full overflow-hidden w-full h-full relative px-4`}
 			>
 				{/* Icon */}
-				<MaterialSymbol
-					icon={props.icon}
-					fill
-					size={24}
-					grade={200}
-					className="z-10"
-				/>
+				<MaterialSymbol icon={props.icon} fill size={24} grade={200} />
 				{/* State Layer */}
 				<motion.div
 					className={`absolute inset-0 ${
@@ -104,7 +98,7 @@ export const App = (props: IApp) => {
 			whileTap={{
 				flexBasis: "50%",
 				y: -24,
-				zIndex: 100,
+				zIndex: 10,
 				// transition: transition.enter,
 			}}
 			onTapStart={handleTapStart}
@@ -112,7 +106,7 @@ export const App = (props: IApp) => {
 			onTapCancel={handleTapCancel}
 		>
 			<motion.span
-				className="relative -top-10 py-1 px-3 rounded-full text-2xs font-sans font-semibold tracking-normal bg-md-surface-container-highest text-md-on-surface-variant"
+				className="relative -top-10 py-1 px-3 rounded-full text-2xs font-sans font-semibold tracking-normal bg-md-surface-container text-md-on-surface-variant"
 				variants={textMotion}
 				initial="hidden"
 				animate={textAnimationControl}
@@ -145,6 +139,9 @@ export const AppsDrawer = () => {
 						state="enabled"
 					/>
 				))}
+			</div>
+			<div className="w-full flex flex-col gap-4 items-center">
+				<p>Apps</p>
 			</div>
 		</BaseDrawer>
 	)

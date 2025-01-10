@@ -2,7 +2,6 @@ import { convertHourToString } from "@/utils/convertTime"
 import { UIEvent, useCallback, useEffect, useRef, useState } from "react"
 import { motion, Variants } from "motion/react"
 import { transition } from "@/utils/motionUtils"
-import { FAB } from "@/components/buttons/FAB"
 import { ITimelineEvent, sampleEvents } from "@/assets/sampleEvents"
 import { AnimatePresence } from "framer-motion"
 import { Event } from "@/components/cards/Event"
@@ -335,8 +334,8 @@ export const Timeline = () => {
 						}
 					>
 						<div className="flex flex-row items-center gap-2">
-							<IconButton icon="chevron_left" style="standard" />
-							<IconButton icon="chevron_right" style="standard" />
+							<IconButton icon="chevron_left" variant="standard" />
+							<IconButton icon="chevron_right" variant="standard" />
 							<div className="relative flex flex-col items-left ">
 								<span className="w-20 text-md-on-surface text-xl font-display font-semibold tracking-tight">
 									Today
@@ -352,10 +351,8 @@ export const Timeline = () => {
 						</div>
 
 						{/* Lock button to prevent scrolling back to the current time */}
-						<div className="flex flex-row items-center gap-2">
-							<BaseButton>
-								<MaterialSymbol icon="event" />
-							</BaseButton>
+						<div className="flex flex-row items-center gap-4">
+							<IconButton icon="event" variant="filled-tonal" />
 							<Switch
 								icon={isTimelineLocked ? "lock" : "lock_open"}
 								hasIcon={true}

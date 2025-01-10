@@ -2,14 +2,14 @@ import "./App.css"
 import "react-material-symbols/rounded"
 import { Layout } from "@/layout/Layout"
 
-import { AppsDrawer } from "@components/drawers/AppsDrawer"
 import { Timeline } from "@components/timeline/Timeline"
+import { Drawers } from "./components/drawers/Drawers"
 
 function App() {
 	return (
 		<Layout>
 			<Timeline />
-			<AppsDrawer />
+			<Drawers />
 		</Layout>
 	)
 }

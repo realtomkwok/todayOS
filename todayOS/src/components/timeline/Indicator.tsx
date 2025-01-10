@@ -18,6 +18,7 @@ export const Indicator = (props: IIndicator) => {
 		>
 			<motion.div
 				className="w-2 h-2 rounded-full bg-md-error -ml-1 flex justify-center items-center z-20"
+				layout
 				initial={false}
 				animate={{
 					width: isInteracting.current ? "fit-content" : "0.5rem",

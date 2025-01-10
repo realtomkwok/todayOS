@@ -23,7 +23,7 @@ export const BaseButton = ({ className, children, ...props }: IBaseButton) => {
 			transition={transition.enter}
 		>
 			<motion.div
-				className="absolute inset-0 bg-md-on-primary-fixed rounded-[inherit] opacity-0"
+				className="absolute inset-0 bg-md-on-primary-fixed rounded-[inherit] opacity-0 w-full h-full"
 				initial={{ opacity: stateLayerOpacity.initial }}
 				animate={{ opacity: isTap ? stateLayerOpacity.press : 0 }}
 				transition={transition.enter}

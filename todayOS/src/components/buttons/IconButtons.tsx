@@ -1,11 +1,10 @@
-import { motion } from "motion/react"
+import { HTMLMotionProps, motion } from "motion/react"
 import { MaterialSymbol, SymbolCodepoints } from "react-material-symbols"
-import { IBaseButton } from "./Base"
 
-interface IIconButton extends IBaseButton {
+interface IIconButton extends HTMLMotionProps<"button"> {
 	icon: SymbolCodepoints
 	fill?: boolean
-	style?: "filled" | "filled-tonal" | "outlined" | "standard"
+	variant?: "filled" | "filled-tonal" | "outlined" | "standard"
 	state?: "enabled" | "disabled" | "hovered" | "focused" | "pressed"
 	isToggled?: boolean
 }
@@ -13,8 +12,8 @@ interface IIconButton extends IBaseButton {
 export const IconButton = ({
 	icon,
 	fill,
-	state = "enabled",
-	style = "filled",
+	// state = "enabled",
+	variant = "filled",
 	isToggled,
 	...props
 }: IIconButton) => {
@@ -48,7 +47,7 @@ export const IconButton = ({
 
 	return (
 		<motion.button
-			className={`w-10 h-10 rounded-full flex items-center justify-center ${styles[style][isToggled ? "toggle" : "default"]}`}
+			className={`w-10 h-10 rounded-full flex items-center justify-center ${styles[variant][isToggled ? "toggle" : "default"]}`}
 			{...props}
 		>
 			<MaterialSymbol icon={icon} fill={fill} size={24} />
