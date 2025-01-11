@@ -39,15 +39,20 @@ export const Switch = ({ icon, hasIcon, state, ...props }: ISwitch) => {
 				setIsPressed(false)
 			}}
 			onTapCancel={() => setIsPressed(false)}
+			style={{
+				justifyContent: `flex-${state === "on" ? "end" : "start"}`,
+			}}
+			layout
 		>
 			<motion.div
-				className={`rounded-full flex items-center justify-center absolute left-1 ${themes[state].handle}`}
+				className={`rounded-full flex items-center justify-center left-1 ${themes[state].handle}`}
 				initial={false}
 				animate={{
 					scale: isPressed ? 1.1 : 1,
-					x: state === "on" ? "calc(200% - 1.5rem)" : "0%",
 					transition: isPressed ? transition.enter : transition.exit,
 				}}
+				layout
+				transition={transition.enter}
 			>
 				{hasIcon && (
 					<MaterialSymbol
