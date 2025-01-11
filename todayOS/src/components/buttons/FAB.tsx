@@ -37,13 +37,17 @@ export const FAB = (props: FABProps) => {
 	}
 
 	return (
-		<AnimatePresence>
+		<AnimatePresence data-oid="vnkz3z-">
 			<BaseButton
 				className={`${themes[role].container} ${styles[size]}`}
 				{...rest}
+				data-oid="8u_abo4"
 			>
-				<MaterialSymbol fill icon={icon} />
-				<span className="text-sm font-sans font-medium tracking-normal">
+				<MaterialSymbol fill icon={icon} data-oid=":7q2pvg" />
+				<span
+					className="text-sm font-sans font-medium tracking-normal"
+					data-oid="_cpm3:t"
+				>
 					{text}
 				</span>
 			</BaseButton>

@@ -49,8 +49,9 @@ export const IconButton = ({
 		<motion.button
 			className={`w-10 h-10 rounded-full flex items-center justify-center ${styles[variant][isToggled ? "toggle" : "default"]}`}
 			{...props}
+			data-oid="f6uxubz"
 		>
-			<MaterialSymbol icon={icon} fill={fill} size={24} />
+			<MaterialSymbol icon={icon} fill={fill} size={24} data-oid="32-dn87" />
 		</motion.button>
 	)
 }

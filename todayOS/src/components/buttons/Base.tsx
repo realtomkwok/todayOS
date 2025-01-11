@@ -21,13 +21,16 @@ export const BaseButton = ({ className, children, ...props }: IBaseButton) => {
 			onTap={() => setIsTap(false)}
 			onTapCancel={() => setIsTap(false)}
 			transition={transition.enter}
+			data-oid="j-7chq4"
 		>
 			<motion.div
 				className="absolute inset-0 bg-md-on-primary-fixed rounded-[inherit] opacity-0 w-full h-full"
 				initial={{ opacity: stateLayerOpacity.initial }}
 				animate={{ opacity: isTap ? stateLayerOpacity.press : 0 }}
 				transition={transition.enter}
+				data-oid="0queo-c"
 			/>
+
 			{children}
 		</motion.button>
 	)

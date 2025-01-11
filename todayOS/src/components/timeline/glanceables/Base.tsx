@@ -9,7 +9,7 @@ interface IGlanceables {
 
 export const Glanceables = (props: IGlanceables) => {
 	const { isActive, icon, text } = props
-	
+
 	return (
 		<motion.div
 			className={`flex flex-row justify-center items-center gap-1 w-fit h-fit ${
@@ -17,13 +17,16 @@ export const Glanceables = (props: IGlanceables) => {
 					? "bg-md-primary-container text-md-on-primary-container rounded-full px-3 py-1 font-medium text-base"
 					: "text-md-on-surface-variant px-2 font-normal text-sm"
 			}`}
+			data-oid="7jzzv3n"
 		>
 			<MaterialSymbol
 				icon={icon}
 				size={isActive ? 20 : 16}
 				grade={isActive ? -25 : 0}
+				data-oid="rkicz4e"
 			/>
-			<span>{text}</span>
+
+			<span data-oid="0pgq.j.">{text}</span>
 		</motion.div>
 	)
 }

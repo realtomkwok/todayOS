@@ -15,6 +15,7 @@ export const Indicator = (props: IIndicator) => {
 		<div
 			className="absolute left-4 right-0 flex items-center z-10"
 			style={{ top: `${offsetFromTop * 100}%` }}
+			data-oid="8nrwyyl"
 		>
 			<motion.div
 				className="w-2 h-2 rounded-full bg-md-error -ml-1 flex justify-center items-center z-20"
@@ -34,6 +35,7 @@ export const Indicator = (props: IIndicator) => {
 					fontSize: "0.5rem",
 					transition: transition.exit,
 				}}
+				data-oid="9p1ny.c"
 			>
 				<motion.span
 					className="text-xs font-medium font-display text-md-on-error"
@@ -46,6 +48,7 @@ export const Indicator = (props: IIndicator) => {
 						scale: isInteracting.current ? 1 : 0,
 					}}
 					transition={transition.enter}
+					data-oid=".3-9cea"
 				>
 					{displayTime.toLocaleTimeString([], {
 						hour: "numeric",
@@ -65,8 +68,12 @@ export const Indicator = (props: IIndicator) => {
 					opacity: 0,
 					transition: transition.exit,
 				}}
+				data-oid="73bzlck"
 			>
-				<motion.span className="absolute -top-6 text-md-on-surface-variant text-xl font-display font-medium tracking-normal">
+				<motion.span
+					className="absolute -top-6 text-md-on-surface-variant text-xl font-display font-medium tracking-normal"
+					data-oid="a8svn2d"
+				>
 					{displayTime.toLocaleDateString("en-US", {
 						weekday: "short",
 						month: "short",
@@ -79,6 +86,7 @@ export const Indicator = (props: IIndicator) => {
 							? "items-start "
 							: "items-end"
 					}`}
+					data-oid="zpq30lm"
 				>
 					<motion.span
 						className="text-md-on-surface text-8xl font-display font-extrabold tracking-normal"
@@ -96,6 +104,7 @@ export const Indicator = (props: IIndicator) => {
 							fontVariationSettings: `'opsz' 32, 'wdth' 75, 'wght' 200`,
 							transition: transition.exit,
 						}}
+						data-oid="db.xi-7"
 					>
 						{
 							displayTime
@@ -107,7 +116,10 @@ export const Indicator = (props: IIndicator) => {
 								.split(" ")[0]
 						}
 					</motion.span>
-					<motion.span className="text-md-on-surface-variant text-xl font-display font-medium tracking-normal">
+					<motion.span
+						className="text-md-on-surface-variant text-xl font-display font-medium tracking-normal"
+						data-oid="kg.4tgl"
+					>
 						{
 							displayTime
 								.toLocaleTimeString([], {
@@ -120,7 +132,10 @@ export const Indicator = (props: IIndicator) => {
 					</motion.span>
 				</div>
 			</motion.div>
-			<div className="absolute w-screen -left-4 h-px bg-md-error flex-grow" />
+			<div
+				className="absolute w-screen -left-4 h-px bg-md-error flex-grow"
+				data-oid="4jb80-k"
+			/>
 		</div>
 	)
 }

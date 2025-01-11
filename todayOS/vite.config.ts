@@ -10,7 +10,7 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
       "@components": path.resolve(__dirname, "./src/components"),
       "@utils": path.resolve(__dirname, "./src/utils"),
-      "@themes": path.resolve(__dirname, "./src/themes"),
-    },
-  },
+      "@themes": path.resolve(__dirname, "./src/themes")
+    }
+  }
 });

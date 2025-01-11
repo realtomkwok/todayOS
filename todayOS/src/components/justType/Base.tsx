@@ -94,6 +94,7 @@ export const JustType = () => {
 						}
 					}}
 				/>
+
 				<BaseButton className="bg-md-secondary-container text-md-on-secondary-container p-4 rounded-3xl mr-1 w-16">
 					<MaterialSymbol icon="graphic_eq" fill size={20} />
 				</BaseButton>
@@ -111,7 +112,7 @@ export const JustType = () => {
 						animate={{ opacity: 0.32 }}
 						exit={{ opacity: 0 }}
 						transition={transition.onScreen}
-						className="fixed inset-0 bg-md-scrim z-[70]"
+						className="fixed top-0 left-0 right-0 w-[200%] h-[200%] bg-md-scrim z-[90]"
 						onClick={() => setIsActive(false)}
 					/>
 				)}
@@ -132,7 +133,7 @@ export const JustType = () => {
 									<motion.li
 										key={index}
 										variants={itemsVariants}
-										className="relative flex items-center justify-left bg-md-surface-container-high text-md-on-surface-variant border border-md-outline-variant rounded-3xl z-[80] w-fit h-fit px-4 py-2 gap-2"
+										className="relative flex items-center justify-left bg-md-surface-container-high text-md-on-surface-variant border border-md-outline-variant rounded-3xl z-[90] w-fit h-fit px-4 py-2 gap-2"
 									>
 										<span className="font-sans text-sm font-medium tracking-tight italic w-fit">
 											{suggestion.text}

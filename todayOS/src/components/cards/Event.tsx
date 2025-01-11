@@ -22,10 +22,14 @@ export const Event = (event: IEvent) => {
 			animate={{ opacity: 1, x: 0 }}
 			exit={{ opacity: 0, x: -20 }}
 			transition={{ duration: 0.3 }}
+			data-oid="5j0rwva"
 		>
-			<div className="flex flex-col">
-				<div className="inline-block text-md-on-surface-container text-xs font-sans tracking-normal">
-					<span className="">
+			<div className="flex flex-col" data-oid="b3q-:36">
+				<div
+					className="inline-block text-md-on-surface-container text-xs font-sans tracking-normal"
+					data-oid="az0:zcu"
+				>
+					<span className="" data-oid=".iw.q:b">
 						{event.startTime.toLocaleTimeString([], {
 							hour: "numeric",
 							minute: "2-digit",
@@ -37,11 +41,17 @@ export const Event = (event: IEvent) => {
 						})}
 					</span>
 				</div>
-				<h3 className="text-md-on-surface-container font-display font-medium text-sm">
+				<h3
+					className="text-md-on-surface-container font-display font-medium text-sm"
+					data-oid="9:grl8j"
+				>
 					{event.title}
 				</h3>
 				{event.description && (
-					<p className="text-md-on-surface-container text-xs">
+					<p
+						className="text-md-on-surface-container text-xs"
+						data-oid="psi642:"
+					>
 						{event.description}
 					</p>
 				)}

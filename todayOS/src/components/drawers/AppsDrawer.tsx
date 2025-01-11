@@ -76,9 +76,11 @@ export const App = (props: IApp) => {
 				className={`${
 					themes[props.role].container
 				} flex flex-col items-center justify-center rounded-full overflow-hidden w-full h-full relative px-4`}
+				data-oid="k6gzit0"
 			>
 				{/* Icon */}
 				<MaterialSymbol icon={props.icon} fill size={24} grade={200} />
+
 				{/* State Layer */}
 				<motion.div
 					className={`absolute inset-0 ${
@@ -87,6 +89,7 @@ export const App = (props: IApp) => {
 					variants={stateMotion}
 					initial="initial"
 					animate={stateAnimationControl}
+					data-oid="1au6cxn"
 				/>
 			</div>
 		)
@@ -94,7 +97,7 @@ export const App = (props: IApp) => {
 
 	return (
 		<motion.div
-			className="flex flex-col justify-center items-center basis-1/4 min-w-16"
+			className="flex flex-col justify-center items-center basis-1/4 min-w-16 h-16"
 			whileTap={{
 				flexBasis: "50%",
 				y: -24,
@@ -113,7 +116,7 @@ export const App = (props: IApp) => {
 			>
 				{props.name}
 			</motion.span>
-			<AppIcon {...props} />
+			<AppIcon {...props} data-oid="99y8zwr" />
 		</motion.div>
 	)
 }
@@ -124,12 +127,35 @@ export const AppsDrawer = () => {
 		{ icon: "forum", name: "Message", role: "primary" },
 		{ icon: "public", name: "Browser", role: "primary" },
 		{ icon: "waving_hand", name: "Hey!", role: "tertiary" },
+		{ icon: "call", name: "Phone", role: "primary" },
+		{ icon: "forum", name: "Message", role: "primary" },
+		{ icon: "public", name: "Browser", role: "primary" },
+		{ icon: "waving_hand", name: "Hey!", role: "tertiary" },
+		{ icon: "call", name: "Phone", role: "primary" },
+		{ icon: "forum", name: "Message", role: "primary" },
+		{ icon: "public", name: "Browser", role: "primary" },
+		{ icon: "waving_hand", name: "Hey!", role: "tertiary" },
 	]
 
 	return (
-		<BaseDrawer>
+		<BaseDrawer data-oid="4i_6_yk">
 			{/* Dock */}
-			<div className="w-full md:w-fit flex flex-row justify-between gap-4 h-16">
+			<div
+				className="w-full md:w-fit flex flex-row justify-between gap-4 h-16"
+				data-oid="zv9.c-i"
+			>
+				{apps.slice(0, 4).map((app) => (
+					<App
+						key={app.name}
+						icon={app.icon}
+						name={app.name}
+						role={app.role}
+						state="enabled"
+						data-oid="kat4el2"
+					/>
+				))}
+			</div>
+			<div className="w-full grid grid-cols-4 gap-4 mt-4">
 				{apps.map((app) => (
 					<App
 						key={app.name}
@@ -137,11 +163,9 @@ export const AppsDrawer = () => {
 						name={app.name}
 						role={app.role}
 						state="enabled"
+						data-oid="kat4el2"
 					/>
 				))}
-			</div>
-			<div className="w-full flex flex-col gap-4 items-center">
-				<p>Apps</p>
 			</div>
 		</BaseDrawer>
 	)

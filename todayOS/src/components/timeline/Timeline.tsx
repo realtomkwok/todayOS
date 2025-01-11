@@ -192,21 +192,18 @@ export const Timeline = () => {
 		// Only set timeout if not currently locked
 		if (!isTimelineLocked) {
 			scrollTimeoutRef.current = window.setTimeout(() => {
-				isInteracting.current = false
-				// Double-check lock state before executing scroll
-				if (!isTimelineLocked) {
-					const now = new Date()
-					setDisplayTime(now)
-					scrollToTime(now)
-					// console.log("Scroll to time after 3 seconds")
-				}
+
+				const now = new Date()
+				setDisplayTime(now)
+				scrollToTime(now)
+				// console.log("Scroll to time after 3 seconds")
+
 				isScrolling.current = false
 			}, 3000)
 		} else {
 			// If already locked, just reset scrolling state after a short delay
 			scrollTimeoutRef.current = window.setTimeout(() => {
 				isScrolling.current = false
-				isInteracting.current = false
 			}, 300) // Shorter timeout for locked state
 		}
 	}
@@ -250,7 +247,9 @@ export const Timeline = () => {
 				if (!isTimelineLocked && !isScrolling.current) {
 					setDisplayTime(newDate)
 					requestAnimationFrame(() => {
-						scrollToTime(newDate)
+						if (!isTimelineLocked) {
+							scrollToTime(newDate)
+						}
 					})
 				}
 			}, 60000)
@@ -297,21 +296,30 @@ export const Timeline = () => {
 	)
 
 	return (
-		<div className="w-full h-screen bg flex flex-col overflow-hidden fixed inset-0">
+		<div
+			className="w-full h-screen bg flex flex-col overflow-hidden fixed inset-0"
+			data-oid="rll6l:q"
+		>
 			{/* Timeline Container */}
 			<div
 				ref={containerRef}
 				className="relative flex-1 min-h-0 overflow-hidden"
+				data-oid="g08:cju"
 			>
 				{/* Fixed time indicator */}
 				<Indicator
 					offsetFromTop={OFFSET_FROM_TOP}
 					isInteracting={isInteracting}
 					displayTime={displayTime}
+					data-oid="hhsi.c9"
 				/>
 
 				{/* Now */}
-				<Now offsetFromTop={OFFSET_FROM_TOP} isInteracting={isInteracting} />
+				<Now
+					offsetFromTop={OFFSET_FROM_TOP}
+					isInteracting={isInteracting}
+					data-oid="76icn:a"
+				/>
 
 				{/* Scrollable timeline */}
 				<motion.div
@@ -322,6 +330,7 @@ export const Timeline = () => {
 					initial="initial"
 					animate={isInteracting.current ? "visible" : "initial"}
 					transition={transition.onScreen}
+					data-oid="ykkshgq"
 				>
 					{/* Header */}
 					<motion.div
@@ -332,15 +341,38 @@ export const Timeline = () => {
 								? { opacity: 1, transition: transition.enter }
 								: { opacity: 0, transition: transition.exit }
 						}
+						data-oid="ekoeyz8"
 					>
-						<div className="flex flex-row items-center gap-2">
-							<IconButton icon="chevron_left" variant="standard" />
-							<IconButton icon="chevron_right" variant="standard" />
-							<div className="relative flex flex-col items-left ">
-								<span className="w-20 text-md-on-surface text-xl font-display font-semibold tracking-tight">
+						<div
+							className="flex flex-row items-center gap-2"
+							data-oid="a7:sov9"
+						>
+							<IconButton
+								icon="chevron_left"
+								variant="standard"
+								data-oid="jt0xk3l"
+							/>
+
+							<IconButton
+								icon="chevron_right"
+								variant="standard"
+								data-oid="zo0-gee"
+							/>
+
+							<div
+								className="relative flex flex-col items-left "
+								data-oid=":xumz9n"
+							>
+								<span
+									className="w-20 text-md-on-surface text-xl font-display font-semibold tracking-tight"
+									data-oid="8xr:6fj"
+								>
 									Today
 								</span>
-								<span className="text-md-on-surface-variant text-sm font-display font-regular tracking-normal">
+								<span
+									className="text-md-on-surface-variant text-sm font-display font-regular tracking-normal"
+									data-oid="xo9zgsh"
+								>
 									{displayTime.toLocaleDateString("en-US", {
 										weekday: "short",
 										month: "short",
@@ -351,8 +383,16 @@ export const Timeline = () => {
 						</div>
 
 						{/* Lock button to prevent scrolling back to the current time */}
-						<div className="flex flex-row items-center gap-4">
-							<IconButton icon="event" variant="filled-tonal" />
+						<div
+							className="flex flex-row items-center gap-4"
+							data-oid="2uwv9e5"
+						>
+							<IconButton
+								icon="event"
+								variant="filled-tonal"
+								data-oid="17vtura"
+							/>
+
 							<Switch
 								icon={isTimelineLocked ? "lock" : "lock_open"}
 								hasIcon={true}
@@ -369,6 +409,7 @@ export const Timeline = () => {
 										return !prev
 									})
 								}}
+								data-oid="i-lvpua"
 							/>
 						</div>
 					</motion.div>
@@ -382,20 +423,31 @@ export const Timeline = () => {
 								dimensions.paddingTop +
 								dimensions.paddingBottom
 							}px`,
+
 							paddingTop: `${dimensions.paddingTop}px`,
 							paddingBottom: `${dimensions.paddingBottom}px`,
 						}}
+						data-oid="_7yswr0"
 					>
 						{isTimelineLocked && (
-							<div className="fixed flex flex-col w-fit items-center justify-end top-20 px-4 py-2 bg-md-inverse-surface rounded-2xl z-50">
-								<span className="text-md-inverse-on-surface text-sm font-sans font-regular tracking-normal">
+							<div
+								className="fixed flex flex-col w-fit items-center justify-end top-20 px-4 py-2 bg-md-inverse-surface rounded-2xl z-50"
+								data-oid="oqut0_j"
+							>
+								<span
+									className="text-md-inverse-on-surface text-sm font-sans font-regular tracking-normal"
+									data-oid="vcea8ms"
+								>
 									Timeline Locked
 								</span>
 							</div>
 						)}
 
 						{/* Timeline vertical line */}
-						<motion.div className="absolute left-4 top-0 bottom-0 w-px bg-md-outline-variant opacity-50" />
+						<motion.div
+							className="absolute left-4 top-0 bottom-0 w-px bg-md-outline-variant opacity-50"
+							data-oid="4umxq7."
+						/>
 
 						{/* Hour blocks */}
 						{Array.from({ length: 24 }, (_, hour) => {
@@ -413,12 +465,19 @@ export const Timeline = () => {
 									style={{
 										top: `${heightBeforeHour + dimensions.paddingTop}px`,
 									}}
+									data-oid="qm:iqvg"
 								>
-									<div className="flex items-center">
-										<span className="text-xs font-display text-md-on-surface-variant mr-2 w-12 text-right">
+									<div className="flex items-center" data-oid="-4c.0q4">
+										<span
+											className="text-xs font-display text-md-on-surface-variant mr-2 w-12 text-right"
+											data-oid="3._9udw"
+										>
 											{`${convertHourToString(hour, true)}`}
 										</span>
-										<div className="w-4 h-px bg-md-outline-variant -ml-px" />
+										<div
+											className="w-4 h-px bg-md-outline-variant -ml-px"
+											data-oid=":4brg.b"
+										/>
 									</div>
 								</div>
 							)
@@ -430,14 +489,30 @@ export const Timeline = () => {
 							style={{
 								top: `${getHeightBeforeHour(24) + dimensions.paddingTop}px`,
 							}}
+							data-oid="wdc:zy6"
 						>
-							<div className="flex flex-col items-left justify-start w-full h-fit mt-12 gap-4">
-								<div className="flex flex-row items-center w-full p-2">
-									<div className="w-full flex flex-col items-left">
-										<span className="text-md-on-surface text-xl font-display font-semibold tracking-tight">
+							<div
+								className="flex flex-col items-left justify-start w-full h-fit mt-12 gap-4"
+								data-oid="n5_yhs6"
+							>
+								<div
+									className="flex flex-row items-center w-full p-2"
+									data-oid="844zu6q"
+								>
+									<div
+										className="w-full flex flex-col items-left"
+										data-oid=":y9c-_x"
+									>
+										<span
+											className="text-md-on-surface text-xl font-display font-semibold tracking-tight"
+											data-oid="3zyv2oa"
+										>
 											Tomorrow
 										</span>
-										<span className="text-md-on-surface-variant text-sm font-display font-regular tracking-normal">
+										<span
+											className="text-md-on-surface-variant text-sm font-display font-regular tracking-normal"
+											data-oid="9bo.wgj"
+										>
 											{tomorrow.toLocaleDateString("en-US", {
 												weekday: "short",
 												month: "short",
@@ -445,20 +520,32 @@ export const Timeline = () => {
 											})}
 										</span>
 									</div>
-									<span className="text-md-secondary text-xl flex flex-row items-center gap-2 rounded-full">
-										<MaterialSymbol icon="sunny" fill />
-										<span className="text-xl font-medium">76°</span>
+									<span
+										className="text-md-secondary text-xl flex flex-row items-center gap-2 rounded-full"
+										data-oid="pwxw2qp"
+									>
+										<MaterialSymbol icon="sunny" fill data-oid="2nefg.." />
+										<span className="text-xl font-medium" data-oid="7aqmfla">
+											76°
+										</span>
 									</span>
 								</div>
 
-								<div className="relative w-full flex flex-col items-left justify-start gap-2 pl-28">
+								<div
+									className="relative w-full flex flex-col items-left justify-start gap-2 pl-28"
+									data-oid="3smf:be"
+								>
 									{tomorrowEvents.map((event) => {
 										return (
 											<div
 												key={event.id}
 												className="flex flex-col items-left justify-start w-full bg-md-surface-container-low px-4 py-3 rounded-2xl border-b border-md-outline-variant"
+												data-oid="-hazecb"
 											>
-												<span className="text-md-on-surface-variant text-xs font-display font-regular tracking-normal">
+												<span
+													className="text-md-on-surface-variant text-xs font-display font-regular tracking-normal"
+													data-oid="ni7zehe"
+												>
 													{event.startTime.toLocaleTimeString([], {
 														hour: "numeric",
 														minute: "2-digit",
@@ -471,7 +558,10 @@ export const Timeline = () => {
 														hour12: true,
 													})}
 												</span>
-												<span className="text-md-on-surface text-sm font-display font-regular tracking-normal">
+												<span
+													className="text-md-on-surface text-sm font-display font-regular tracking-normal"
+													data-oid="56srac-"
+												>
 													{event.title}
 												</span>
 											</div>
@@ -485,8 +575,9 @@ export const Timeline = () => {
 						<div
 							className="absolute top-0 w-full h-full"
 							style={{ paddingTop: dimensions.paddingTop }}
+							data-oid="0k5sryg"
 						>
-							<AnimatePresence>
+							<AnimatePresence data-oid="kkj4t_4">
 								{sampleEvents.map((event: ITimelineEvent) => {
 									const startHour = event.startTime.getHours()
 									const startMinute = event.startTime.getMinutes()
@@ -521,6 +612,7 @@ export const Timeline = () => {
 											position={eventPosition}
 											eventHeight={eventHeight}
 											color={event.color}
+											data-oid="-wk_743"
 										/>
 									)
 								})}
