@@ -1,5 +1,5 @@
 import { HTMLMotionProps, motion } from "motion/react"
-import { useState } from "react"
+import React, { useState } from "react"
 import { stateLayerOpacity, transition } from "@/utils/motionUtils"
 
 export interface IBaseButton extends HTMLMotionProps<"button"> {

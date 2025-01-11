@@ -9,7 +9,6 @@ import { Now } from "@/components/timeline/Now"
 import { Indicator } from "@/components/timeline/Indicator"
 import { MaterialSymbol } from "react-material-symbols"
 import { Switch } from "@/components/buttons/Switch"
-import { BaseButton } from "../buttons/Base"
 import { IconButton } from "../buttons/IconButtons"
 
 const MIN_HOUR_HEIGHT = 120
@@ -192,7 +191,6 @@ export const Timeline = () => {
 		// Only set timeout if not currently locked
 		if (!isTimelineLocked) {
 			scrollTimeoutRef.current = window.setTimeout(() => {
-
 				const now = new Date()
 				setDisplayTime(now)
 				scrollToTime(now)

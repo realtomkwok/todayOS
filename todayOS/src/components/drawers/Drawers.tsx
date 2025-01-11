@@ -1,10 +1,4 @@
-import {
-	AnimatePresence,
-	motion,
-	useMotionValue,
-	useTransform,
-	Variants,
-} from "motion/react"
+import { AnimatePresence, motion, Variants } from "motion/react"
 import { AppsDrawer } from "./AppsDrawer"
 import { ClipboardDrawer } from "./ClipboardDrawer"
 import { JustType } from "../justType/Base"
@@ -44,6 +38,7 @@ export const Drawers = () => {
 			velocity,
 		}: { offset: { x: number; y: number }; velocity: { x: number; y: number } }
 	) => {
+		console.log(e)
 		// Handle horizontal swipe
 		const swipeX = swipePower(offset.x, velocity.x)
 		if (Math.abs(offset.x) > Math.abs(offset.y)) {

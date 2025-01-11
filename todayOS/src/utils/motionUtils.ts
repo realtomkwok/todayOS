@@ -1,4 +1,6 @@
 // Easing presets
+// noinspection SpellCheckingInspection
+
 export const easing = {
 	// Standard easing
 	emphasized: [0, 0.2, 1, 1],

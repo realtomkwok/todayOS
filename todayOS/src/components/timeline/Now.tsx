@@ -8,7 +8,7 @@ interface INow {
 	isInteracting: RefObject<boolean>
 }
 
-const Glaceable = (props: {
+const Glanceable = (props: {
 	icon: SymbolCodepoints
 	text: string
 	state: string
@@ -34,7 +34,7 @@ const Glaceable = (props: {
 
 	return (
 		<div
-			className={`flex flex-row items-center justify-left gap-2 text-md-primary text-sm font-sans tracking-normal rounded-full px-4 py-2 font-medium w-fit`}
+			className={`flex flex-row items-center justify-left gap-2 text-md-primary text-sm font-sans tracking-normal rounded-full px-4 py-2 font-medium w-fit ${themes[props.role].container}`}
 			data-oid="3stwyg:"
 		>
 			<MaterialSymbol icon={props.icon} fill size={20} data-oid="3:d41xa" />
@@ -63,7 +63,7 @@ export const Now = (props: INow) => {
 				className="flex flex-col items-start justify-center w-2/3 h-full"
 				data-oid="t8a7xwi"
 			>
-				<Glaceable
+				<Glanceable
 					icon="rainy"
 					text="Showers in 10 minutes"
 					role="primary"
