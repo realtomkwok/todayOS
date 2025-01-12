@@ -5,11 +5,14 @@ import { RefObject } from "react"
 interface IIndicator {
 	offsetFromTop: number
 	isInteracting: RefObject<boolean>
+	isTimelineLocked: boolean
 	displayTime: Date
 }
 
 export const Indicator = (props: IIndicator) => {
-	const { offsetFromTop, isInteracting, displayTime } = props
+	const { offsetFromTop, isInteracting, isTimelineLocked, displayTime } = props
+
+	const shouldShowInteractiveState = isTimelineLocked || isInteracting.current
 
 	return (
 		<div
@@ -17,15 +20,16 @@ export const Indicator = (props: IIndicator) => {
 			style={{ top: `${offsetFromTop * 100}%` }}
 			data-oid="8nrwyyl"
 		>
+			{/* Pill Indicator */}
 			<motion.div
 				className="w-2 h-2 rounded-full bg-md-error -ml-1 flex justify-center items-center z-20"
 				layout
 				initial={false}
 				animate={{
-					width: isInteracting.current ? "fit-content" : "0.5rem",
-					height: isInteracting.current ? "fit-content" : "0.5rem",
-					padding: isInteracting.current ? "0.5rem 1rem" : "0",
-					fontSize: isInteracting.current ? "1rem" : "0.5rem",
+					width: shouldShowInteractiveState ? "fit-content" : "0.5rem",
+					height: shouldShowInteractiveState ? "fit-content" : "0.5rem",
+					padding: shouldShowInteractiveState ? "0.5rem 1rem" : "0",
+					fontSize: shouldShowInteractiveState ? "1rem" : "0.5rem",
 					transition: transition.enter,
 				}}
 				exit={{
@@ -44,8 +48,8 @@ export const Indicator = (props: IIndicator) => {
 						scale: 0,
 					}}
 					animate={{
-						opacity: isInteracting.current ? 1 : 0,
-						scale: isInteracting.current ? 1 : 0,
+						opacity: shouldShowInteractiveState ? 1 : 0,
+						scale: shouldShowInteractiveState ? 1 : 0,
 					}}
 					transition={transition.enter}
 					data-oid=".3-9cea"
@@ -57,11 +61,12 @@ export const Indicator = (props: IIndicator) => {
 					})}
 				</motion.span>
 			</motion.div>
+			{/* Date and Time */}
 			<motion.div
 				className="absolute left-4 z-50 flex flex-col items-start"
 				initial={false}
 				animate={{
-					opacity: isInteracting.current ? 0 : 1,
+					opacity: shouldShowInteractiveState ? 0 : 1,
 					transition: transition.enter,
 				}}
 				exit={{
@@ -94,10 +99,9 @@ export const Indicator = (props: IIndicator) => {
 							fontVariationSettings: `'opsz' 32, 'wdth' 75, 'wght' 200`,
 						}}
 						animate={{
-							fontVariationSettings:
-								!isInteracting.current || !isInteracting.current
-									? `'opsz' 24, 'wdth' 75, 'wght' 800`
-									: `'opsz' 32, 'wdth' 75, 'wght' 200`,
+							fontVariationSettings: !shouldShowInteractiveState
+								? `'opsz' 24, 'wdth' 75, 'wght' 800`
+								: `'opsz' 32, 'wdth' 75, 'wght' 200`,
 							transition: transition.enter,
 						}}
 						exit={{

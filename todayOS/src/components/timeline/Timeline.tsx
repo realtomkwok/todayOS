@@ -59,11 +59,16 @@ export const Timeline = () => {
 
 	// Calculate dimensions based on container size and content
 	const calculateDimensions = useCallback(() => {
-		if (!containerRef.current) return
+		if (!containerRef.current || !timelineRef.current) return
 
 		const viewportHeight = containerRef.current.offsetHeight
 		const indicatorOffset = viewportHeight * OFFSET_FROM_TOP
 		const { hourHeights, minuteHeight, totalHeight } = calculateHeights()
+
+		// Force a reflow to ensure proper layout
+		timelineRef.current.style.display = "none"
+		void timelineRef.current.offsetHeight
+		timelineRef.current.style.display = ""
 
 		setDimensions({
 			hourHeights,
@@ -105,7 +110,7 @@ export const Timeline = () => {
 		// Get total height of all hour blocks
 		const totalTimelineHeight = getHeightBeforeHour(24)
 
-		// If scrolled past the last hour block, return 23:59
+		// Ensure we don't exceed 23:59
 		if (adjustedPosition >= totalTimelineHeight) {
 			const lastTime = new Date()
 			lastTime.setHours(23, 59, 0, 0)
@@ -159,24 +164,24 @@ export const Timeline = () => {
 
 	const scrollToTime = useCallback(
 		(time: Date) => {
-			if (timelineRef.current && dimensions.totalHeight > 0) {
-				const position = getScrollPositionForTime(time)
-				timelineRef.current.scrollTop =
-					position + dimensions.paddingTop - dimensions.indicatorOffset
-				timelineRef.current.style.scrollBehavior = "smooth"
-			}
+			if (!timelineRef.current || dimensions.totalHeight <= 0) return
+
+			const position = getScrollPositionForTime(time)
+			const targetScrollTop =
+				position + dimensions.paddingTop - dimensions.indicatorOffset
+
+			timelineRef.current.style.scrollBehavior = "smooth"
+			timelineRef.current.scrollTop = targetScrollTop
+
+			// Reset scroll behavior after animation
+			setTimeout(() => {
+				if (timelineRef.current) {
+					timelineRef.current.style.scrollBehavior = "auto"
+				}
+			}, 300)
 		},
 		[dimensions, getScrollPositionForTime]
 	)
-
-	// Add a useEffect to watch lock state changes
-	useEffect(() => {
-		// If timeline becomes locked, cancel any pending scroll timeout
-		if (isTimelineLocked && scrollTimeoutRef.current) {
-			clearTimeout(scrollTimeoutRef.current)
-			isScrolling.current = false
-		}
-	}, [isTimelineLocked])
 
 	// Handle scroll with debounce
 	const handleScroll = (e: UIEvent<HTMLDivElement>) => {
@@ -189,41 +194,65 @@ export const Timeline = () => {
 		}
 
 		// Only set timeout if not currently locked
-		if (!isTimelineLocked) {
-			scrollTimeoutRef.current = window.setTimeout(() => {
+		scrollTimeoutRef.current = window.setTimeout(() => {
+			isScrolling.current = false
+
+			// Only scroll back to current time if not locked and not interacting
+			if (!isTimelineLocked && !isInteracting.current) {
 				const now = new Date()
 				setDisplayTime(now)
 				scrollToTime(now)
-				// console.log("Scroll to time after 3 seconds")
-
-				isScrolling.current = false
-			}, 3000)
-		} else {
-			// If already locked, just reset scrolling state after a short delay
-			scrollTimeoutRef.current = window.setTimeout(() => {
-				isScrolling.current = false
-			}, 300) // Shorter timeout for locked state
-		}
+			}
+		}, 3000)
 	}
 
-	// Add event listeners to detect user interaction
+	// Interaction handling
 	useEffect(() => {
-		const handleInteraction = () => {
+		const container = containerRef.current
+		let interactionTimeoutId: number | NodeJS.Timeout
+
+		const handleInteractionStart = () => {
 			isInteracting.current = true
+			if (interactionTimeoutId) {
+				clearTimeout(interactionTimeoutId)
+			}
 		}
 
-		document.addEventListener("touchstart", handleInteraction)
-		document.addEventListener("scroll", handleInteraction)
-		document.addEventListener("pointerdown", handleInteraction)
-		document.addEventListener("pointerup", handleInteraction)
+		const handleInteractionEnd = () => {
+			interactionTimeoutId = setTimeout(() => {
+				isInteracting.current = false
+
+				// Only scroll to current time if not locked and not scrolling
+				if (!isTimelineLocked && !isScrolling.current) {
+					const now = new Date()
+					setDisplayTime(now)
+					scrollToTime(now)
+				}
+			}, 10000)
+		}
+
+		if (container) {
+			// Touch/pointer interaction
+			container.addEventListener("touchstart", handleInteractionStart)
+			container.addEventListener("pointerdown", handleInteractionStart)
+
+			// End interaction
+			container.addEventListener("touchend", handleInteractionEnd)
+			container.addEventListener("pointerup", handleInteractionEnd)
+		}
 
 		return () => {
-			document.removeEventListener("touchstart", handleInteraction)
-			document.removeEventListener("scroll", handleInteraction)
-			document.removeEventListener("pointerdown", handleInteraction)
-			document.removeEventListener("pointerup", handleInteraction)
+			if (container) {
+				container.removeEventListener("touchstart", handleInteractionStart)
+				container.removeEventListener("pointerdown", handleInteractionStart)
+				container.removeEventListener("touchend", handleInteractionEnd)
+				container.removeEventListener("pointerup", handleInteractionEnd)
+			}
+			if (interactionTimeoutId) {
+				clearTimeout(interactionTimeoutId)
+			}
 		}
-	}, [])
+	}, [isTimelineLocked, scrollToTime])
 
 	// Auto-update current time
 	useEffect(() => {
@@ -232,23 +261,12 @@ export const Timeline = () => {
 			(60 - now.getSeconds()) * 1000 - now.getMilliseconds()
 
 		const initialTimeout = setTimeout(() => {
-			// Only update display time and scroll if not locked
-			if (!isTimelineLocked) {
-				setDisplayTime(new Date())
-				scrollToTime(new Date())
-			}
-
 			const interval = setInterval(() => {
-				const newDate = new Date()
-
-				// Only update display time and scroll if not locked and not scrolling
-				if (!isTimelineLocked && !isScrolling.current) {
+				// Only update if not locked and not interacting
+				if (!isTimelineLocked && !isInteracting.current) {
+					const newDate = new Date()
 					setDisplayTime(newDate)
-					requestAnimationFrame(() => {
-						if (!isTimelineLocked) {
-							scrollToTime(newDate)
-						}
-					})
+					scrollToTime(newDate)
 				}
 			}, 60000)
 
@@ -275,9 +293,9 @@ export const Timeline = () => {
 	// State monitor
 	useEffect(() => {
 		console.log(
-			`Timeline locked state: ${isTimelineLocked}, Timeline is scrolling: ${isScrolling.current}`
+			`Timeline locked state: ${isTimelineLocked}, Timeline is scrolling: ${isScrolling.current}, Interacting: ${isInteracting.current}`
 		)
-	}, [isTimelineLocked, isScrolling])
+	}, [isTimelineLocked, isInteracting])
 
 	const timelineAnimationVariants: Variants = {
 		initial: {
@@ -292,6 +310,25 @@ export const Timeline = () => {
 	const tomorrowEvents = sampleEvents.filter(
 		(event) => event.startTime.getDate() === tomorrow.getDate()
 	)
+
+	// Add visibility change handler
+	useEffect(() => {
+		const handleVisibilityChange = () => {
+			if (document.visibilityState === "visible") {
+				// Recalculate dimensions when becoming visible
+				calculateDimensions()
+
+				// Reset scroll position to current time
+				const now = new Date()
+				setDisplayTime(now)
+				scrollToTime(now)
+			}
+		}
+
+		document.addEventListener("visibilitychange", handleVisibilityChange)
+		return () =>
+			document.removeEventListener("visibilitychange", handleVisibilityChange)
+	}, [calculateDimensions, scrollToTime])
 
 	return (
 		<div
@@ -308,6 +345,7 @@ export const Timeline = () => {
 				<Indicator
 					offsetFromTop={OFFSET_FROM_TOP}
 					isInteracting={isInteracting}
+					isTimelineLocked={isTimelineLocked}
 					displayTime={displayTime}
 					data-oid="hhsi.c9"
 				/>
@@ -316,6 +354,7 @@ export const Timeline = () => {
 				<Now
 					offsetFromTop={OFFSET_FROM_TOP}
 					isInteracting={isInteracting}
+					isTimelineLocked={isTimelineLocked}
 					data-oid="76icn:a"
 				/>
 
@@ -326,7 +365,9 @@ export const Timeline = () => {
 					onScroll={handleScroll}
 					variants={timelineAnimationVariants}
 					initial="initial"
-					animate={isInteracting.current ? "visible" : "initial"}
+					animate={
+						!isInteracting.current && !isTimelineLocked ? "initial" : "visible"
+					}
 					transition={transition.onScreen}
 					data-oid="ykkshgq"
 				>
@@ -335,9 +376,9 @@ export const Timeline = () => {
 						className="fixed p-4 z-10 w-full flex justify-between items-center bg-gradient-to-b from-md-surface h-fit"
 						initial={{ opacity: 0 }}
 						animate={
-							isInteracting.current
-								? { opacity: 1, transition: transition.enter }
-								: { opacity: 0, transition: transition.exit }
+							!isInteracting.current && !isTimelineLocked
+								? { opacity: 0, transition: transition.exit }
+								: { opacity: 1, transition: transition.enter }
 						}
 						data-oid="ekoeyz8"
 					>

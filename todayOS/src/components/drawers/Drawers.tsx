@@ -17,15 +17,15 @@ const swipePower = (offset: number, velocity: number) => {
 // Memoized JustType to prevent re-renders
 const MemoizedJustType = memo(JustType)
 
-const drawers = [
-	<AppsDrawer key="apps" />,
-	<ClipboardDrawer key="clipboard" />,
-	<PeopleDrawer key="people" />,
-]
-
 export const Drawers = () => {
 	const [[drawerIndex, direction], setDrawer] = useState([0, 0])
-	const [isDrawerOpen, setDrawerOpen] = useState(false)
+	const [drawerIsOpen, setDrawerOpen] = useState(false)
+
+	const drawers = [
+		<AppsDrawer key="apps" drawerIsOpen={drawerIsOpen} />,
+		<ClipboardDrawer key="clipboard" />,
+		<PeopleDrawer key="people" />,
+	]
 
 	const paginate = (newDirection: number) => {
 		setDrawer([drawerIndex + newDirection, newDirection])
@@ -58,7 +58,7 @@ export const Drawers = () => {
 					setDrawerOpen(false)
 				}
 				// If dragging up and drawer is closed, open it
-				else if (swipeY < 0 && !isDrawerOpen) {
+				else if (swipeY < 0 && !drawerIsOpen) {
 					setDrawerOpen(true)
 				}
 			}
@@ -88,7 +88,7 @@ export const Drawers = () => {
 			y: "calc(100vh - 12em)",
 		},
 		animate: {
-			y: isDrawerOpen ? "0" : "calc(100vh - 12rem)",
+			y: drawerIsOpen ? "0" : "calc(100vh - 12rem)",
 			transition: { type: "spring", stiffness: 300, damping: 40 },
 		},
 	}
