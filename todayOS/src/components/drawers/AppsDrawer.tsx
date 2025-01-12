@@ -202,7 +202,7 @@ export const AppsDrawer = ({ drawerIsOpen }: { drawerIsOpen: boolean }) => {
 
 	return (
 		<BaseDrawer>
-			<div className="w-full grid auto-rows-fr gap-6">
+			<div className="w-full sm:w-1/2 lg:w-1/3 grid auto-rows-fr gap-6">
 				{appsInRows.map((row, rowIndex) => (
 					<div
 						key={rowIndex}

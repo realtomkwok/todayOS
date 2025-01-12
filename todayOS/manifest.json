@@ -1,0 +1,13 @@
+{
+	"name": "todayOS",
+	"start_url": ".",
+	"display": "standalone",
+	"icons": [
+		{
+			"src": "/src/assets/app-icons/ios/1024.png",
+			"sizes": "1024x1024",
+			"type": "image/png",
+			"purpose": "maskable"
+		}
+	]
+}
