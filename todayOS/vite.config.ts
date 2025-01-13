@@ -4,8 +4,28 @@ import path from "path"
 import { PWAAssetsOptions, VitePWA } from "vite-plugin-pwa"
 
 const pwaAssets: PWAAssetsOptions = {
-	config: true,
-	overrideManifestIcons: true,
+	config: false,
+	disabled: false,
+	preset: {
+		transparent: {
+			sizes: [48, 72, 96, 144, 192, 256, 384, 512],
+			favicons: [
+				[16, "favicon-16x16.png"],
+				[32, "favicon-32x32.png"],
+				[48, "favicon.ico"],
+			],
+			padding: 0,
+		},
+		maskable: {
+			sizes: [192, 512],
+			padding: 0,
+		},
+		apple: {
+			sizes: [120, 152, 167, 180, 1024],
+			padding: 0,
+		},
+	},
+	image: "public/favicon.svg",
 }
 
 // https://vite.dev/config/
@@ -18,7 +38,7 @@ export default defineConfig({
 			injectRegister: "inline",
 			strategies: "generateSW",
 			registerType: "autoUpdate",
-			includeAssets: ["favicon/favicon.svg"],
+			includeAssets: ["favicon.svg"],
 			manifest: {
 				name: "GYST",
 				short_name: "GYST",
