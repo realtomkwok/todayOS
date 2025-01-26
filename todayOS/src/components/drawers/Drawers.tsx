@@ -2,7 +2,7 @@ import { AnimatePresence, motion, Variants } from "motion/react"
 import { AppsDrawer } from "./AppsDrawer"
 import { ClipboardDrawer } from "./ClipboardDrawer"
 import { JustType } from "../justType/Base"
-import { useState, memo } from "react"
+import { memo, useState } from "react"
 import { transition } from "@/utils/motionUtils"
 import { PeopleDrawer } from "./PeopleDrawer"
 
@@ -85,10 +85,11 @@ export const Drawers = () => {
 
 	const containerVariants: Variants = {
 		initial: {
-			y: "calc(100vh - 12em)",
+			y: "calc(100vh - 12rem)",
 		},
 		animate: {
 			y: drawerIsOpen ? "0" : "calc(100vh - 12rem)",
+			paddingTop: drawerIsOpen ? "2rem" : "0",
 			transition: { type: "spring", stiffness: 300, damping: 40 },
 		},
 	}
@@ -101,7 +102,7 @@ export const Drawers = () => {
 			animate="animate"
 		>
 			<div className="w-full relative -top-5 flex justify-center items-center px-4 z-20">
-				<MemoizedJustType />
+				<MemoizedJustType drawerIsOpen={drawerIsOpen} />
 			</div>
 			<AnimatePresence mode="wait" custom={direction}>
 				<motion.div

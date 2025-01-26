@@ -11,10 +11,11 @@ const suggestions: { icon: SymbolCodepoints; text: string }[] = [
 	{ icon: "reminder", text: "Remind me to pick up groceries on the way home" },
 ]
 
-export const JustType = () => {
+export const JustType = (props: { drawerIsOpen: boolean }) => {
 	const [isActive, setIsActive] = useState(false)
 	const [inputValue, setInputValue] = useState("")
 	const inputRef = useRef<HTMLInputElement>(null)
+	const { drawerIsOpen } = props
 
 	const handleActivate = () => {
 		setIsActive(true)
@@ -23,7 +24,7 @@ export const JustType = () => {
 		}, 100) // Small delay to ensure animation starts before focus
 	}
 
-	const containerVariants: Variants = {
+	const suggestionContainer: Variants = {
 		hidden: {
 			opacity: 0,
 			transition: {
@@ -35,19 +36,26 @@ export const JustType = () => {
 		},
 		show: {
 			opacity: 1,
-			transition: {
-				when: "beforeChildren",
-				staggerDirection: -1,
-				staggerChildren: 0.1,
-				delayChildren: 0.2,
-			},
+			transition: drawerIsOpen
+				? {
+						when: "beforeChildren",
+						staggerDirection: 1,
+						staggerChildren: 0.1,
+						delayChildren: 0.2,
+					}
+				: {
+						when: "beforeChildren",
+						staggerDirection: -1,
+						staggerChildren: 0.1,
+						delayChildren: 0.1,
+					},
 		},
 	}
 
-	const itemsVariants: Variants = {
+	const suggestionItems: Variants = {
 		hidden: {
 			opacity: 0,
-			y: 20,
+			y: drawerIsOpen ? -20 : 20,
 		},
 		show: {
 			opacity: 1,
@@ -95,9 +103,11 @@ export const JustType = () => {
 					}}
 				/>
 
-				<BaseButton className="bg-md-secondary-container text-md-on-secondary-container p-4 rounded-3xl mr-1 w-16">
-					<MaterialSymbol icon="graphic_eq" fill size={20} />
-				</BaseButton>
+				<motion.div>
+					<BaseButton className="bg-md-secondary-container text-md-on-secondary-container p-4 rounded-3xl mr-1 w-16">
+						<MaterialSymbol icon="graphic_eq" fill size={20} />
+					</BaseButton>
+				</motion.div>
 			</motion.div>
 		)
 	}
@@ -123,8 +133,9 @@ export const JustType = () => {
 						<>
 							<motion.ul
 								key="active-container"
-								className="relative -top-20 left-0 w-full h-fit flex flex-col gap-4 z-[90] "
-								variants={containerVariants}
+								className="relative left-0 w-full h-fit flex flex-col gap-4 z-[90]"
+								style={{ top: drawerIsOpen ? "10rem" : "-5rem" }}
+								variants={suggestionContainer}
 								initial="hidden"
 								animate="show"
 								exit="hidden"
@@ -132,7 +143,7 @@ export const JustType = () => {
 								{suggestions.map((suggestion, index) => (
 									<motion.li
 										key={index}
-										variants={itemsVariants}
+										variants={suggestionItems}
 										className="relative flex items-center justify-left bg-md-surface-container-high text-md-on-surface-variant border border-md-outline-variant rounded-3xl z-[90] w-fit h-fit px-4 py-2 gap-2"
 									>
 										<span className="font-sans text-sm font-medium tracking-tight italic w-fit">
