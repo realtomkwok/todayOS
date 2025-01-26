@@ -1,5 +1,5 @@
-import { motion, AnimatePresence, MotionProps } from "framer-motion"
-import { useState, useRef } from "react"
+import { AnimatePresence, motion, MotionProps } from "framer-motion"
+import { useRef, useState } from "react"
 import { transition } from "@utils/motionUtils"
 import { MaterialSymbol, SymbolCodepoints } from "react-material-symbols"
 import { BaseButton } from "@components/buttons/Base"
@@ -103,7 +103,7 @@ export const JustType = () => {
 	}
 
 	return (
-		<div className="w-full relative h-fit">
+		<div className="w-full h-fit relative">
 			<AnimatePresence mode="wait">
 				{isActive && (
 					<motion.div
@@ -112,7 +112,7 @@ export const JustType = () => {
 						animate={{ opacity: 0.32 }}
 						exit={{ opacity: 0 }}
 						transition={transition.onScreen}
-						className="fixed top-0 left-0 right-0 w-[200%] h-[200%] bg-md-scrim z-[90]"
+						className="fixed -top-[100%] left-0 right-0 w-[200%] h-[200%] bg-md-scrim z-[90]"
 						onClick={() => setIsActive(false)}
 					/>
 				)}
