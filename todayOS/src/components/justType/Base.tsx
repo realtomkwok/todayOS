@@ -1,5 +1,5 @@
 import { AnimatePresence, motion, MotionProps } from "framer-motion"
-import { useRef, useState } from "react"
+import { ChangeEvent, useRef, useState } from "react"
 import { transition } from "@utils/motionUtils"
 import { MaterialSymbol, SymbolCodepoints } from "react-material-symbols"
 import { BaseButton } from "@components/buttons/Base"
@@ -14,6 +14,7 @@ const suggestions: { icon: SymbolCodepoints; text: string }[] = [
 export const JustType = (props: { drawerIsOpen: boolean }) => {
 	const [isActive, setIsActive] = useState(false)
 	const [inputValue, setInputValue] = useState("")
+	const [icon, setIcon] = useState<SymbolCodepoints>("graphic_eq")
 	const inputRef = useRef<HTMLInputElement>(null)
 	const { drawerIsOpen } = props
 
@@ -21,7 +22,21 @@ export const JustType = (props: { drawerIsOpen: boolean }) => {
 		setIsActive(true)
 		setTimeout(() => {
 			inputRef.current?.focus()
+			if (inputValue.length > 0 && inputValue != "") {
+				setIcon("send")
+			}
 		}, 100) // Small delay to ensure animation starts before focus
+	}
+
+	const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+		const value = e.currentTarget.value
+		// Only update icon if crossing the empty/non-empty threshold
+		if (value.length === 0 || value.length > 0) {
+			// Use requestAnimationFrame to avoid interrupting focus (doesn't work tho)
+			requestAnimationFrame(() => {
+				setIcon(value.length > 0 ? "send" : "graphic_eq")
+			})
+		}
 	}
 
 	const suggestionContainer: Variants = {
@@ -96,8 +111,10 @@ export const JustType = (props: { drawerIsOpen: boolean }) => {
 					type="text"
 					className="w-full bg-transparent font-sans text-base font-medium tracking-wide outline-none px-4 py-2 placeholder:text-md-on-surface-variant placeholder:font-medium placeholder:text-md placeholder:tracking-tight placeholder:italic"
 					autoComplete="off"
+					onChange={handleInputChange}
 					onKeyDown={(e) => {
 						if (e.key === "Enter") {
+							e.preventDefault() // Prevent any default handling
 							setInputValue(e.currentTarget.value)
 						}
 					}}
@@ -105,7 +122,7 @@ export const JustType = (props: { drawerIsOpen: boolean }) => {
 
 				<motion.div>
 					<BaseButton className="bg-md-secondary-container text-md-on-secondary-container p-4 rounded-3xl mr-1 w-16">
-						<MaterialSymbol icon="graphic_eq" fill size={20} />
+						<MaterialSymbol icon={icon} fill size={20} />
 					</BaseButton>
 				</motion.div>
 			</motion.div>
