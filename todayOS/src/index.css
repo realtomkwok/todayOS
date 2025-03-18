@@ -11,29 +11,29 @@
 @tailwind utilities;
 
 @layer base {
-	/* Default to light theme */
-	:root {
-		@apply light;
-	}
+    /* Default to light theme */
+    :root {
+        @apply light;
+    }
 
-	body {
-		@apply bg-md-surface
-	}
+    body {
+        @apply bg-md-surface
+    }
 
-	/* Apply dark theme based on system preference */
-	@media (prefers-color-scheme: dark) {
-		:root {
-			@apply dark;
-		}
+    /* Apply dark theme based on system preference */
+    @media (prefers-color-scheme: dark) {
+        :root {
+            @apply dark;
+        }
 
-		body {
-			@apply bg-md-surface
-		}
-	}
+        body {
+            @apply bg-md-surface
+        }
+    }
 }
 
 @layer components {
-	.elevation-0 {
-		@apply shadow
-	}
+    .elevation-0 {
+        @apply shadow
+    }
 }
