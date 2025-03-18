@@ -2,6 +2,7 @@ import { defineConfig } from "vite"
 import react from "@vitejs/plugin-react"
 import path from "path"
 import { PWAAssetsOptions, VitePWA } from "vite-plugin-pwa"
+import tailwindcss from "@tailwindcss/vite"
 
 const pwaAssets: PWAAssetsOptions = {
 	config: true,
@@ -12,6 +13,7 @@ const pwaAssets: PWAAssetsOptions = {
 export default defineConfig({
 	plugins: [
 		react(),
+		tailwindcss(),
 		VitePWA({
 			mode: "development",
 			base: "/",

@@ -84,7 +84,7 @@ export const JustType = (props: { drawerIsOpen: boolean }) => {
 	const Inactive = (props: MotionProps) => {
 		return (
 			<motion.div
-				className="absolute flex items-center justify-left bg-md-primary text-md-on-primary rounded-3xl z-[20] cursor-pointer"
+				className="absolute flex items-center justify-left bg-md-primary text-md-on-primary rounded-3xl z-20 cursor-pointer"
 				// onClick={handleActivate}
 				whileTap={{ scale: 1.1, y: -8 }}
 				{...props}
@@ -101,7 +101,7 @@ export const JustType = (props: { drawerIsOpen: boolean }) => {
 	const Active = (props: MotionProps) => {
 		return (
 			<motion.div
-				className="absolute flex items-center justify-left bg-md-surface-container-high text-md-on-surface border border-md-outline-variant rounded-3xl overflow-hidden z-[100]"
+				className="absolute flex items-center justify-left bg-md-surface-container-high text-md-on-surface border border-md-outline-variant rounded-3xl overflow-hidden z-100"
 				{...props}
 			>
 				<input
@@ -109,7 +109,7 @@ export const JustType = (props: { drawerIsOpen: boolean }) => {
 					placeholder="Just type... or ask me anything!"
 					defaultValue={inputValue}
 					type="text"
-					className="w-full bg-transparent font-sans text-base font-medium tracking-wide outline-none px-4 py-2 placeholder:text-md-on-surface-variant placeholder:font-medium placeholder:text-md placeholder:tracking-tight placeholder:italic"
+					className="w-full bg-transparent font-sans text-base font-medium tracking-wide outline-hidden px-4 py-2 placeholder:text-md-on-surface-variant placeholder:font-medium placeholder:text-md placeholder:tracking-tight placeholder:italic"
 					autoComplete="off"
 					onChange={handleInputChange}
 					onKeyDown={(e) => {
@@ -139,7 +139,7 @@ export const JustType = (props: { drawerIsOpen: boolean }) => {
 						animate={{ opacity: 0.32 }}
 						exit={{ opacity: 0 }}
 						transition={transition.onScreen}
-						className="fixed -top-[100%] left-0 right-0 w-[200%] h-[200%] bg-md-scrim z-[90]"
+						className="fixed -top-[100%] left-0 right-0 w-[200%] h-[200%] bg-md-scrim z-90"
 						onClick={() => setIsActive(false)}
 					/>
 				)}
@@ -150,7 +150,7 @@ export const JustType = (props: { drawerIsOpen: boolean }) => {
 						<>
 							<motion.ul
 								key="active-container"
-								className="relative left-0 w-full h-fit flex flex-col gap-4 z-[90]"
+								className="relative left-0 w-full h-fit flex flex-col gap-4 z-90"
 								style={{ top: drawerIsOpen ? "10rem" : "-5rem" }}
 								variants={suggestionContainer}
 								initial="hidden"
@@ -161,7 +161,7 @@ export const JustType = (props: { drawerIsOpen: boolean }) => {
 									<motion.li
 										key={index}
 										variants={suggestionItems}
-										className="relative flex items-center justify-left bg-md-surface-container-high text-md-on-surface-variant border border-md-outline-variant rounded-3xl z-[90] w-fit h-fit px-4 py-2 gap-2"
+										className="relative flex items-center justify-left bg-md-surface-container-high text-md-on-surface-variant border border-md-outline-variant rounded-3xl z-90 w-fit h-fit px-4 py-2 gap-2"
 									>
 										<span className="font-sans text-sm font-medium tracking-tight italic w-fit">
 											{suggestion.text}

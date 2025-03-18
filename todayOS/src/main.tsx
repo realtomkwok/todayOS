@@ -12,7 +12,7 @@ window
 	.addEventListener("change", updateThemeColor)
 
 createRoot(document.getElementById("root")!).render(
-	<StrictMode data-oid="u60o.8p">
-		<App data-oid="1k3u38m" />
+	<StrictMode>
+		<App />
 	</StrictMode>
 )

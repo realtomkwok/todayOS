@@ -137,7 +137,7 @@ export const Indicator = (props: IIndicator) => {
 				</div>
 			</motion.div>
 			<div
-				className="absolute w-screen -left-4 h-px bg-md-error flex-grow"
+				className="absolute w-screen -left-4 h-px bg-md-error grow"
 				data-oid="4jb80-k"
 			/>
 		</div>

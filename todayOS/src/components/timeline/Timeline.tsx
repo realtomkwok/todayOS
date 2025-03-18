@@ -373,7 +373,7 @@ export const Timeline = () => {
 				>
 					{/* Header */}
 					<motion.div
-						className="fixed p-4 z-10 w-full flex justify-between items-center bg-gradient-to-b from-md-surface h-fit"
+						className="fixed p-4 z-10 w-full flex justify-between items-center bg-linear-to-b from-md-surface h-fit"
 						initial={{ opacity: 0 }}
 						animate={
 							!isInteracting.current && !isTimelineLocked
