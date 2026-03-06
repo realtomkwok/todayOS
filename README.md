@@ -1,5 +1,7 @@
 # todayOS
 
+**Try it now: ** https://os.tomkwok.xyz
+
 ## Overview
 Since the launch of iPhone, apps have always been taking the center stage of the OS. We have to switch between apps to get and share information, while we often find ourselves lost track and got distracted. What if an OS can gather the information we need across different apps, and present them in a unified, decluttered way, or more specifically, like in a timeline? So we can have an overview of our day, and get a sense of what's happening around us, without being overwhelmed.
 
